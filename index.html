@@ -3,123 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TuiPhone VZLA - Marketplace Certificado</title>
+    <title>TuiPhone VZLA - App Oficial</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary-orange: #ff9900;
             --dark-bg: #131921;
             --dark-nav: #232f3e;
-            --light-bg: #eaeded;
+            --light-bg: #f4f5f7;
             --text-main: #0f1111;
             --text-muted: #565959;
             --border-color: #d5d9d9;
             --ebay-green: #86b817;
+            --whatsapp-green: #25d366;
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0; padding: 0;
             background-color: var(--light-bg);
             color: var(--text-main);
         }
 
+        /* HEADER APP STYLE */
         header {
             background-color: var(--dark-bg);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
             position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        .brand-container {
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
-
+        .brand-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .brand-logo {
-            width: 38px; height: 38px;
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, var(--primary-orange), #e47911);
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.2rem; color: white;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.3rem; color: white;
         }
-
-        .brand-title { font-size: 1.4rem; font-weight: 800; margin: 0; }
+        .brand-title { font-size: 1.3rem; font-weight: 800; margin: 0; }
         .brand-title span.phone { color: var(--primary-orange); }
         .brand-title span.vzla { color: var(--ebay-green); }
 
-        .search-container {
-            display: flex; flex-grow: 1; max-width: 500px; border-radius: 6px; overflow: hidden;
-        }
-        .search-container input { flex-grow: 1; border: none; padding: 10px 15px; outline: none; font-size: 0.95rem; }
-        .btn-search { background-color: var(--primary-orange); border: none; padding: 0 15px; cursor: pointer; font-size: 1.1rem; }
-
         .header-actions { display: flex; gap: 10px; align-items: center; }
-        .btn-action {
-            background-color: #ffd814; color: #0f1111; border: 1px solid #fcd200;
-            padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;
+        .app-btn {
+            background-color: #ffd814; color: #0f1111; border: none;
+            padding: 8px 14px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 6px; transition: transform 0.1s;
         }
-        .btn-action:hover { background-color: #f7ca00; }
+        .app-btn:hover { transform: scale(1.03); background-color: #f7ca00; }
+        .app-btn.google { background: white; color: #444; border: 1px solid #ccc; }
 
-        .main-wrapper { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
+        .main-wrapper { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
 
+        /* GRILLA */
         .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
         }
-
         .product-card {
-            background: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);
-            display: flex; flex-direction: column; transition: transform 0.2s;
+            background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
         }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-
-        .card-img { width: 100%; height: 200px; object-fit: cover; background: #f0f0f0; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .card-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
         .card-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-        .card-title { font-size: 1rem; font-weight: 700; margin: 0 0 5px 0; }
-        .card-specs { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px; }
-        .card-price { font-size: 1.3rem; font-weight: 800; color: #b12704; margin-top: auto; }
-        .seller-info { font-size: 0.75rem; color: #555; margin-bottom: 8px; font-style: italic; }
-
-        .card-buttons { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-card {
-            flex: 1; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;
+        .card-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 5px 0; }
+        .card-specs { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .card-price { font-size: 1.3rem; font-weight: 800; color: #b12704; margin-top: auto; margin-bottom: 10px; }
+        
+        .btn-chat-privado {
+            background-color: var(--whatsapp-green); color: white; border: none; width: 100%;
+            padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
-        .btn-chat { background-color: #0066c0; color: white; }
-        .btn-chat:hover { background-color: #004b91; }
+        .btn-chat-privado:hover { background-color: #1ebe5d; }
 
-        /* MODALES GENERALES */
+        /* MODAL ESTILO APP */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 15px;
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 10px;
+            backdrop-filter: blur(3px);
         }
         .modal-content {
-            background: #fff; width: 100%; max-width: 480px; border-radius: 8px; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column;
+            background: #fff; width: 100%; max-width: 500px; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); max-height: 85vh; display: flex; flex-direction: column;
         }
-        .modal-header { background: var(--dark-bg); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header { background: var(--dark-bg); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .close-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
         .modal-body { padding: 20px; overflow-y: auto; }
 
-        .form-row { margin-bottom: 12px; }
-        .form-row label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; }
-        .form-row input, .form-row select, .form-row textarea {
-            width: 100%; padding: 9px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; font-size: 0.9rem;
+        /* CHAT PRIVADO ESTILO WHATSAPP/APP */
+        .chat-container { display: flex; flex-direction: column; height: 380px; background: #efeae2; border-radius: 8px; overflow: hidden; }
+        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .message-bubble {
+            max-width: 75%; padding: 10px 14px; border-radius: 10px; font-size: 0.9rem; line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative;
         }
-        .btn-submit { background-color: var(--primary-orange); border: none; width: 100%; padding: 11px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .message-bubble.incoming { background: white; align-self: flex-start; border-top-left-radius: 2px; }
+        .message-bubble.outgoing { background: #dcf8c6; align-self: flex-end; border-top-right-radius: 2px; }
+        .message-sender { font-size: 0.7rem; font-weight: bold; color: #007600; margin-bottom: 3px; display: block; }
+        
+        .chat-input-area { display: flex; padding: 10px; background: #f0f0f0; gap: 8px; align-items: center; }
+        .chat-input-area input { flex-grow: 1; border: 1px solid #ccc; padding: 10px 15px; border-radius: 20px; outline: none; font-size: 0.9rem; }
+        .chat-input-area button { background: var(--whatsapp-green); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; }
 
-        /* CHAT STYLES */
-        .chat-box { display: flex; flex-direction: column; height: 300px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 10px; background: #fafafa; }
-        .chat-messages { flex-grow: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .chat-msg { background: #e2e8f0; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; max-width: 80%; }
-        .chat-msg.me { background: #dcf8c6; align-self: flex-end; }
-        .chat-input-row { display: flex; border-top: 1px solid var(--border-color); }
-        .chat-input-row input { flex-grow: 1; border: none; padding: 10px; outline: none; font-size: 0.85rem; }
-        .chat-input-row button { background: #0066c0; color: white; border: none; padding: 0 15px; cursor: pointer; font-weight: bold; }
+        /* NOTIFICACIÓN TOAST FLOTANTE */
+        #toast-notification {
+            position: fixed; bottom: 20px; right: 20px; background: #232f3e; color: white;
+            padding: 12px 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none; z-index: 3000; border-left: 4px solid var(--whatsapp-green); font-size: 0.9rem;
+        }
 
-        .status-box { font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
+        .form-row { margin-bottom: 14px; }
+        .form-row label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; }
+        .form-row input, .form-row textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; }
+        .btn-submit { background-color: var(--primary-orange); border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -129,33 +130,31 @@
         <div class="brand-logo"></div>
         <h1 class="brand-title">Tui<span class="phone">Phone</span> <span class="vzla">VZLA</span></h1>
     </div>
-    <div class="search-container">
-        <input type="text" id="buscador" placeholder="Busca tu iPhone..." oninput="filtrarProductos()">
-        <button class="btn-search" onclick="filtrarProductos()">🔍</button>
-    </div>
-    <div class="header-actions" id="user-menu-container">
-        <!-- Renderizado dinámico según sesión -->
+    <div class="header-actions" id="header-auth-section">
+        <!-- Renderizado dinámico de sesión Google -->
     </div>
 </header>
 
 <div class="main-wrapper">
-    <div id="status" class="status-box" style="background: #e2e3e5; color: #383d41;">Conectando...</div>
+    <div id="status" style="font-size: 0.85rem; margin-bottom: 15px; font-weight: bold;">Conectando con Supabase...</div>
     <div id="lista-items" class="products-grid"></div>
 </div>
 
-<!-- MODAL DE REGISTRO / LOGIN -->
-<div id="modal-auth" class="modal-overlay">
+<!-- MODAL DE CHAT PRIVADO -->
+<div id="modal-chat" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Registro de Usuario</h3>
-            <button class="close-btn" onclick="cerrarAuth()">&times;</button>
+            <h3 id="chat-modal-title">Chat Privado</h3>
+            <button class="close-btn" onclick="cerrarChatPrivado()">&times;</button>
         </div>
-        <div class="modal-body">
-            <div class="form-row"><label>Correo Gmail:</label><input type="email" id="auth-email" placeholder="tu-correo@gmail.com"></div>
-            <div class="form-row"><label>Nombre:</label><input type="text" id="auth-nombre" placeholder="Tu nombre"></div>
-            <div class="form-row"><label>Apellido:</label><input type="text" id="auth-apellido" placeholder="Tu apellido"></div>
-            <div class="form-row"><label>Nombre de Usuario (Apodo):</label><input type="text" id="auth-username" placeholder="Ej: jose_iphones"></div>
-            <button class="btn-submit" onclick="registrarUsuario()">Ingresar / Registrarse</button>
+        <div class="modal-body" style="padding: 10px;">
+            <div class="chat-container">
+                <div id="chat-messages-box" class="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="input-mensaje-chat" placeholder="Escribe un mensaje privado..." onkeypress="if(event.key==='Enters')enviarMensajePrivado()">
+                    <button onclick="enviarMensajePrivado()">➤</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -164,54 +163,23 @@
 <div id="modal-publicar" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Publicar iPhone</h3>
+            <h3>Publicar tu iPhone</h3>
             <button class="close-btn" onclick="cerrarPublicar()">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="form-row"><label>Modelo:</label><input type="text" id="p-model" placeholder="Ej: iPhone 13 Pro"></div>
-            <div class="form-row"><label>Almacenamiento:</label><input type="text" id="p-storage" placeholder="Ej: 128GB"></div>
-            <div class="form-row"><label>Batería:</label><input type="text" id="p-battery" placeholder="Ej: 90%"></div>
-            <div class="form-row"><label>Precio ($):</label><input type="number" id="p-price" placeholder="350"></div>
-            <div class="form-row"><label>Estado:</label><input type="text" id="p-state" placeholder="Ej: Impecable 10/10"></div>
-            <div class="form-row"><label>Zona:</label><input type="text" id="p-zone" placeholder="Ej: Caracas"></div>
-            <div class="form-row"><label>Detalles:</label><textarea id="p-details" rows="2"></textarea></div>
+            <div class="form-row"><label>Modelo:</label><input type="text" id="p-model" placeholder="Ej: iPhone 14 Pro"></div>
+            <div class="form-row"><label>Almacenamiento:</label><input type="text" id="p-storage" placeholder="Ej: 256GB"></div>
+            <div class="form-row"><label>Batería:</label><input type="text" id="p-battery" placeholder="Ej: 92%"></div>
+            <div class="form-row"><label>Precio ($):</label><input type="number" id="p-price" placeholder="450"></div>
+            <div class="form-row"><label>Zona:</label><input type="text" id="p-zone" placeholder="Ej: Caracas / Las Mercedes"></div>
             <div class="form-row"><label>Foto del equipo:</label><input type="file" id="p-image" accept="image/*"></div>
-            <button class="btn-submit" onclick="publicarIphone()">Confirmar Publicación</button>
+            <button class="btn-submit" onclick="publicarIphone()">Publicar Anuncio</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL CHAT -->
-<div id="modal-chat" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="chat-title">Negociación</h3>
-            <button class="close-btn" onclick="cerrarChat()">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 10px;">
-            <div class="chat-box">
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="chat-input-row">
-                    <input type="text" id="chat-input" placeholder="Escribe tu oferta o mensaje...">
-                    <button onclick="enviarMensajeChat()">Enviar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL PANEL DE USUARIO -->
-<div id="modal-panel" class="modal-overlay">
-    <div class="modal-content" style="max-width: 600px;">
-        <div class="modal-header">
-            <h3>Mi Panel de Publicaciones</h3>
-            <button class="close-btn" onclick="cerrarPanel()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div id="mis-publicaciones-lista"></div>
-        </div>
-    </div>
-</div>
+<!-- NOTIFICACIÓN TOAST -->
+<div id="toast-notification">Nuevo mensaje recibido 💬</div>
 
 <script>
     const SUPABASE_URL = 'https://vwepjlfhnmrvbduxgqgr.supabase.co';
@@ -219,124 +187,222 @@
     const { createClient } = supabase;
     const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let usuarioLogueado = null;
     let cacheProductos = [];
-    let usuarioActual = JSON.parse(localStorage.getItem('tui_user')) || null;
-    let chatIphoneIdActual = null;
+    let chatActualIphoneId = null;
+    let chatPropietarioEmail = null;
+    let realtimeSubscription = null;
 
-    function actualizarMenuHeader() {
-        const container = document.getElementById('user-menu-container');
-        if (usuarioActual) {
+    async function verificarSesion() {
+        const { data: { session } } = await _supabase.auth.getSession();
+        if (session) {
+            usuarioLogueado = session.user;
+            renderizarMenuUsuario();
+            suscripcionNotificacionesGlobales();
+        } else {
+            renderizarMenuUsuario();
+        }
+    }
+
+    async function iniciarSesionGoogle() {
+        const { error } = await _supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: window.location.href }
+        });
+        if (error) alert('Error al iniciar sesión con Google: ' + error.message);
+    }
+
+    async function cerrarSesion() {
+        await _supabase.auth.signOut();
+        window.location.reload();
+    }
+
+    function renderizarMenuUsuario() {
+        const container = document.getElementById('header-auth-section');
+        if (usuarioLogueado) {
             container.innerHTML = `
-                <span style="font-size:0.85rem; color:#ccc;">Hola, <b>@${usuarioActual.username}</b></span>
-                <button class="btn-action" onclick="abrirPublicar()">+ Vender</button>
-                <button class="btn-action" style="background:#232f3e; color:white; border-color:#555;" onclick="abrirPanel()">Mi Panel</button>
-                <button class="btn-action" style="background:#b12704; color:white;" onclick="cerrarSesion()">Salir</button>
+                <span style="font-size: 0.85rem; color: #ddd;">👤 ${usuarioLogueado.email}</span>
+                <button class="app-btn" onclick="abrirPublicar()">+ Vender</button>
+                <button class="app-btn" style="background: #b12704; color: white;" onclick="cerrarSesion()">Salir</button>
             `;
         } else {
             container.innerHTML = `
-                <button class="btn-action" onclick="abrirAuth()">Registrarse / Iniciar Sesión</button>
+                <button class="app-btn google" onclick="iniciarSesionGoogle()">
+                    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.15C3.17 21.31 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.19C.43 8.13 0 9.87 0 11.7s.43 3.57 1.19 5.1l4.08-2.56z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.17 2.69 1.19 6.6l4.08 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
+                    Acceder con Gmail
+                </button>
             `;
         }
     }
 
-    function abrirAuth() { document.getElementById('modal-auth').style.display = 'flex'; }
-    function cerrarAuth() { document.getElementById('modal-auth').style.display = 'none'; }
-    function abrirPublicar() {
-        if (!usuarioActual) { alert('Debes registrarte primero.'); abrirAuth(); return; }
-        document.getElementById('modal-publicar').style.display = 'flex';
-    }
-    function cerrarPublicar() { document.getElementById('modal-publicar').style.display = 'none'; }
-    function cerrarChat() { document.getElementById('modal-chat').style.display = 'none'; }
-    function abrirPanel() { cargarMisPublicaciones(); document.getElementById('modal-panel').style.display = 'flex'; }
-    function cerrarPanel() { document.getElementById('modal-panel').style.display = 'none'; }
-    function cerrarSesion() { localStorage.removeItem('tui_user'); usuarioActual = null; actualizarMenuHeader(); }
-
-    async function registrarUsuario() {
-        const email = document.getElementById('auth-email').value.trim();
-        const nombre = document.getElementById('auth-nombre').value.trim();
-        const apellido = document.getElementById('auth-apellido').value.trim();
-        const username = document.getElementById('auth-username').value.trim();
-
-        if (!email || !nombre || !apellido || !username) {
-            alert('Completa todos los campos obligatorios.'); return;
-        }
-
-        usuarioActual = { email, nombre, apellido, username };
-        localStorage.setItem('tui_user', JSON.stringify(usuarioActual));
-        cerrarAuth();
-        actualizarMenuHeader();
-        alert('¡Bienvenido, ' + username + '!');
-    }
-
-    async function cargarDatos() {
+    async function cargarInventario() {
         const statusEl = document.getElementById('status');
-        try {
-            const { data, error } = await _supabase.from('iphone').select('*');
-            if (error) throw error;
-            statusEl.textContent = 'Conectado a Supabase exitosamente ✅';
-            statusEl.style.background = '#d4edda'; statusEl.style.color = '#155724';
-            cacheProductos = data || [];
-            filtrarProductos();
-        } catch (err) {
-            statusEl.textContent = 'Error al cargar datos.';
-            statusEl.style.background = '#f8d7da'; statusEl.style.color = '#721c24';
+        const { data, error } = await _supabase.from('iphone').select('*').order('id', { ascending: false });
+        if (error) {
+            statusEl.textContent = 'Error al conectar con la base de datos.';
+            statusEl.style.color = '#b12704';
+            return;
         }
+        statusEl.textContent = 'Sistema sincronizado con Supabase ✅';
+        statusEl.style.color = '#155724';
+        cacheProductos = data || [];
+        renderizarGrilla(cacheProductos);
     }
 
-    function filtrarProductos() {
-        const query = document.getElementById('buscador').value.toLowerCase();
-        const filtrados = cacheProductos.filter(i => (i.model || '').toLowerCase().includes(query));
-        renderizarGrilla(filtrados);
-    }
-
-    function renderizarGrilla(data) {
-        const lista = document.getElementById('lista-items');
-        lista.innerHTML = '';
-        if (data.length === 0) {
-            lista.innerHTML = '<p>No hay iPhones publicados.</p>'; return;
+    function renderizarGrilla(items) {
+        const grid = document.getElementById('lista-items');
+        grid.innerHTML = '';
+        if (items.length === 0) {
+            grid.innerHTML = '<p>No hay iPhones disponibles en este momento.</p>';
+            return;
         }
-        data.forEach(item => {
+        items.forEach(item => {
             const card = document.createElement('div');
             card.className = 'product-card';
             card.innerHTML = `
-                <img class="card-img" src="${item.image_url || ''}" onerror="this.src='https://via.placeholder.com/280x200?text=Sin+Imagen'">
+                <img class="card-img" src="${item.image_url || ''}" onerror="this.src='https://via.placeholder.com/260x200?text=Sin+Imagen'">
                 <div class="card-body">
                     <h3 class="card-title">${item.model || ''} - ${item.storage || ''}</h3>
-                    <div class="card-specs">🔋 ${item.battery || 'N/A'} | 📍 ${item.zone || ''}</div>
-                    <div class="seller-info">Publicado por: @${item.user_email ? item.user_email.split('@')[0] : 'anónimo'}</div>
+                    <div class="card-specs">🔋 Bat: ${item.battery || 'N/A'} | 📍 ${item.zone || ''}</div>
                     <div class="card-price">$${item.price || 0}</div>
-                    <div class="card-buttons">
-                        <button class="btn-card btn-chat" onclick="abrirChat(${item.id}, '${item.model}')">💬 Chat / Negociar</button>
-                    </div>
+                    <button class="btn-chat-privado" onclick="abrirChatPrivado(${item.id}, '${item.model}', '${item.user_email}')">
+                        💬 Chat Privado con Vendedor
+                    </button>
                 </div>
             `;
-            lista.appendChild(card);
+            grid.appendChild(card);
         });
     }
+
+    // SISTEMA DE CHAT PRIVADO POR ANUNCIO
+    function abrirChatPrivado(iphoneId, modelo, vendedorEmail) {
+        if (!usuarioLogueado) {
+            alert('Debes iniciar sesión con tu cuenta de Gmail para abrir un chat privado.');
+            iniciarSesionGoogle();
+            return;
+        }
+        chatActualIphoneId = iphoneId;
+        chatPropietarioEmail = vendedorEmail;
+        document.getElementById('chat-modal-title').textContent = `Chat privado: ${modelo}`;
+        document.getElementById('modal-chat').style.display = 'flex';
+        cargarMensajesPrivados();
+
+        // Escuchar mensajes en tiempo real para este chat específico
+        if (realtimeSubscription) _supabase.removeChannel(realtimeSubscription);
+        realtimeSubscription = _supabase
+            .channel(`chat_${iphoneId}`)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `iphone_id=eq.${iphoneId}` }, payload => {
+                appendMensajeUI(payload.new);
+            })
+            .subscribe();
+    }
+
+    function cerrarChatPrivado() {
+        document.getElementById('modal-chat').style.display = 'none';
+        if (realtimeSubscription) _supabase.removeChannel(realtimeSubscription);
+    }
+
+    async function cargarMensajesPrivados() {
+        const box = document.getElementById('chat-messages-box');
+        box.innerHTML = '<span style="font-size:0.8rem; color:#888; text-align:center;">Cargando mensajes...</span>';
+        
+        const { data, error } = await _supabase
+            .from('messages')
+            .select('*')
+            .eq('iphone_id', chatActualIphoneId)
+            .order('created_at', { ascending: true });
+
+        box.innerHTML = '';
+        if (error || !data || data.length === 0) {
+            box.innerHTML = '<span style="font-size:0.8rem; color:#888; text-align:center;">Este chat es 100% privado entre tú y el vendedor. ¡Comienza la negociación!</span>';
+            return;
+        }
+
+        data.forEach(m => appendMensajeUI(m));
+    }
+
+    function appendMensajeUI(m) {
+        const box = document.getElementById('chat-messages-box');
+        const soyYo = m.remitente_email === usuarioLogueado.email;
+        const div = document.createElement('div');
+        div.className = `message-bubble ${soyYo ? 'outgoing' : 'incoming'}`;
+        div.innerHTML = `
+            <span class="message-sender">${soyYo ? 'Tú' : m.remitente_email.split('@')[0]}</span>
+            ${m.mensaje}
+        `;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    async function enviarMensajePrivado() {
+        const input = document.getElementById('input-mensaje-chat');
+        const texto = input.value.trim();
+        if (!texto) return;
+
+        const { error } = await _supabase.from('messages').insert([{
+            iphone_id: chatActualIphoneId,
+            remitente_email: usuarioLogueado.email,
+            remitente_nombre: usuarioLogueado.email.split('@')[0],
+            destinatario_email: chatPropietarioEmail,
+            mensaje: texto
+        }]);
+
+        if (!error) {
+            input.value = '';
+        } else {
+            alert('Error al enviar mensaje: ' + error.message);
+        }
+    }
+
+    // NOTIFICACIONES ESTILO APP
+    function suscripcionNotificacionesGlobales() {
+        _supabase
+            .channel('global_notifications')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                const nuevoMsg = payload.new;
+                // Si el mensaje va dirigido a mí y no lo envié yo
+                if (nuevoMsg.destinatario_email === usuarioLogueado.email && nuevoMsg.remitente_email !== usuarioLogueado.email) {
+                    mostrarToastNotificacion(`Nuevo mensaje de @${nuevoMsg.remitente_nombre}`);
+                }
+            })
+            .subscribe();
+    }
+
+    function mostrarToastNotificacion(texto) {
+        const toast = document.getElementById('toast-notification');
+        toast.textContent = `💬 ${texto}`;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
+
+    // PUBLICAR
+    function abrirPublicar() {
+        if (!usuarioLogueado) { alert('Inicia sesión con Gmail primero.'); iniciarSesionGoogle(); return; }
+        document.getElementById('modal-publicar').style.display = 'flex';
+    }
+    function cerrarPublicar() { document.getElementById('modal-publicar').style.display = 'none'; }
 
     async function publicarIphone() {
         const model = document.getElementById('p-model').value;
         const storage = document.getElementById('p-storage').value;
         const battery = document.getElementById('p-battery').value;
         const price = document.getElementById('p-price').value;
-        const state = document.getElementById('p-state').value;
         const zone = document.getElementById('p-zone').value;
-        const details = document.getElementById('p-details').value;
         const fileInput = document.getElementById('p-image');
 
         if (!price) { alert('Ingresa un precio.'); return; }
 
         const guardar = async (imgBase64) => {
             const { error } = await _supabase.from('iphone').insert([{
-                model, storage, battery, price, state, zone, details,
+                model, storage, battery, price, zone,
                 image_url: imgBase64,
-                user_email: usuarioActual.email
+                user_email: usuarioLogueado.email
             }]);
             if (error) alert('Error: ' + error.message);
             else {
-                alert('¡Publicado con éxito!');
+                alert('¡Publicación creada exitosamente!');
                 cerrarPublicar();
-                cargarDatos();
+                cargarInventario();
             }
         };
 
@@ -349,96 +415,10 @@
         }
     }
 
-    // GESTIÓN DEL CHAT POR PUBLICACIÓN
-    async function abrirChat(iphoneId, modelo) {
-        if (!usuarioActual) { alert('Inicia sesión para chatear.'); abrirAuth(); return; }
-        chatIphoneIdActual = iphoneId;
-        document.getElementById('chat-title').textContent = `Negociación: ${modelo}`;
-        document.getElementById('modal-chat').style.display = 'flex';
-        cargarMensajesChat();
-    }
-
-    async function cargarMensajesChat() {
-        const container = document.getElementById('chat-messages');
-        container.innerHTML = 'Cargando chat...';
-        const { data, error } = await _supabase
-            .from('messages')
-            .select('*')
-            .eq('iphone_id', chatIphoneIdActual)
-            .order('created_at', { ascending: true });
-
-        container.innerHTML = '';
-        if (error || !data || data.length === 0) {
-            container.innerHTML = '<p style="color:#888; font-size:0.8rem; text-align:center;">No hay mensajes aún. ¡Inicia la conversación!</p>';
-            return;
-        }
-
-        data.forEach(m => {
-            const div = document.createElement('div');
-            div.className = `chat-msg ${m.remitente === usuarioActual.username ? 'me' : ''}`;
-            div.innerHTML = `<b>@${m.remitente}:</b> ${m.mensaje}`;
-            container.appendChild(div);
-        });
-        container.scrollTop = container.scrollHeight;
-    }
-
-    async function enviarMensajeChat() {
-        const input = document.getElementById('chat-input');
-        const mensaje = input.value.trim();
-        if (!mensaje) return;
-
-        const { error } = await _supabase.from('messages').insert([{
-            iphone_id: chatIphoneIdActual,
-            remitente: usuarioActual.username,
-            mensaje: mensaje
-        }]);
-
-        if (!error) {
-            input.value = '';
-            cargarMensajesChat();
-        }
-    }
-
-    // PANEL PERSONAL
-    async function cargarMisPublicaciones() {
-        const container = document.getElementById('mis-publicaciones-lista');
-        container.innerHTML = 'Cargando tus publicaciones...';
-        const { data, error } = await _supabase
-            .from('iphone')
-            .select('*')
-            .eq('user_email', usuarioActual.email);
-
-        if (error || !data || data.length === 0) {
-            container.innerHTML = '<p>No tienes publicaciones activas.</p>';
-            return;
-        }
-
-        container.innerHTML = '';
-        data.forEach(item => {
-            const div = document.createElement('div');
-            div.style.cssText = "display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:10px 0;";
-            div.innerHTML = `
-                <div><b>${item.model}</b> - $${item.price}</div>
-                <button class="btn-action" style="background:#b12704; color:white; padding:5px 10px;" onclick="eliminarPublicacion(${item.id})">Eliminar</button>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    async function eliminarPublicacion(id) {
-        if (!confirm('¿Seguro que deseas eliminar este anuncio?')) return;
-        const { error } = await _supabase.from('iphone').delete().eq('id', id);
-        if (!error) {
-            alert('Anuncio eliminado.');
-            cargarMisPublicaciones();
-            cargarDatos();
-        } else {
-            alert('Error al eliminar: ' + error.message);
-        }
-    }
-
-    actualizarMenuHeader();
-    cargarDatos();
+    // INICIO
+    verificarSesion().then(() => {
+        cargarInventario();
+    });
 </script>
 
 </body>
