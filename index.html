@@ -11,7 +11,7 @@
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-16 flex flex-col justify-between">
 
     <div>
-        <!-- Header Superior con Estilo Profesional -->
+        <!-- Header Superior -->
         <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-2 cursor-pointer" onclick="cambiarVista('catalogo')">
@@ -24,7 +24,6 @@
                     </div>
                 </div>
 
-                <!-- Buscador rápido en el Header -->
                 <div class="w-full sm:w-72 relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -38,7 +37,7 @@
             </div>
         </header>
 
-        <!-- Banner de Confianza -->
+        <!-- Banner -->
         <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-4 text-center text-xs sm:text-sm font-medium shadow-inner flex justify-center items-center gap-6">
             <span><i class="fa-solid fa-shield-halved"></i> Compra y Venta Segura</span>
             <span class="hidden sm:inline">|</span>
@@ -49,7 +48,7 @@
 
         <main class="max-w-7xl mx-auto px-4 mt-6">
 
-            <!-- VISTA 1: CATÁLOGO Y FILTROS -->
+            <!-- VISTA CATÁLOGO -->
             <section id="seccionCatalogo">
                 <div class="mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3"><i class="fa-solid fa-filter text-blue-600"></i> Filtrar por Estado en Venezuela</h2>
@@ -58,7 +57,6 @@
                     </div>
                 </div>
 
-                <!-- Cuadrícula de Productos -->
                 <div id="gridProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <div class="col-span-full text-center py-16">
                         <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
@@ -67,7 +65,7 @@
                 </div>
             </section>
 
-            <!-- VISTA 2: FORMULARIO DE PUBLICACIÓN PROFESIONAL -->
+            <!-- VISTA FORMULARIO -->
             <section id="seccionFormulario" class="hidden max-w-xl mx-auto bg-white p-8 shadow-xl rounded-2xl border border-slate-200">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-black text-slate-900">Publica tu iPhone</h2>
@@ -120,7 +118,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Zona / Municipio</label>
-                            <input type="text" id="inputZone" placeholder="Ej: Chacao, El Viñedo" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
+                            <input type="text" id="inputZone" placeholder="Ej: San Diego, El Viñedo" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
                         </div>
                     </div>
 
@@ -128,12 +126,11 @@
                         <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Foto del iPhone (Archivo o URL)</label>
                         <input type="file" id="inputFile" accept="image/*" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2">
                         <input type="url" id="inputImage" placeholder="O pega un enlace de imagen (https://...)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
-                        <p class="text-[11px] text-slate-400 mt-1">Sube una foto de tu dispositivo o introduce una URL directa.</p>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Detalles y Especificaciones</label>
-                        <textarea id="inputDetails" rows="3" placeholder="Ej: Libre de fábrica, Face ID activo, detalles físicos mínimos..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required></textarea>
+                        <textarea id="inputDetails" rows="3" placeholder="Ej: Libre de fábrica, Face ID activo..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required></textarea>
                     </div>
 
                     <button type="submit" id="btnSubmit" class="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 transition">
@@ -141,26 +138,20 @@
                     </button>
                 </form>
             </section>
-
         </main>
     </div>
 
-    <!-- Footer Profesional -->
     <footer class="bg-slate-900 text-slate-400 py-6 mt-12 border-t border-slate-800 text-center text-xs">
         <p class="font-bold text-slate-300">TuiPhone VZLA &copy; 2026</p>
         <p class="mt-1">El mercado especializado en telefonía móvil con cobertura en todo el territorio nacional.</p>
     </footer>
 
-    <!-- Script de Gestión con Claves Legacy Estables -->
     <script>
+        // Configuración con tu URL y la nueva Clave Pública de Supabase
         const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
-        // Usamos la clave anon estándar compatible con el SDK v2
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2ZXBqbGhubXJ2YmR1eGdxZ3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcyMzg5OTgwOCwiZXhwIjoyMDM5NDc1ODA4fQ.5sB3k5X_example_placeholder_safe'; // Reemplázala por tu anon key estándar de la sección Legacy de Supabase si lo deseas
+        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
 
-        const supabaseClient = supabase.createClient(
-            'https://wvepjlhnmrvbduxgqgr.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2ZXBqbGhubXJ2YmR1eGdxZ3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcyMzg5OTgwOCwiZXhwIjoyMDM5NDc1ODA4fQ.5sB3k5X_example_placeholder_safe'
-        );
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const estadosVenezuela = [
             "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar", 
@@ -170,7 +161,6 @@
         ];
 
         let listaIphonesGlobal = [];
-        let estadoActualFiltro = 'TODOS';
 
         document.addEventListener("DOMContentLoaded", () => {
             const selectState = document.getElementById('inputState');
@@ -262,7 +252,6 @@
         }
 
         async function cargarProductos(filtroEstado = 'TODOS') {
-            estadoActualFiltro = filtroEstado;
             const grid = document.getElementById('gridProductos');
             grid.innerHTML = `
                 <div class="col-span-full text-center py-16">
@@ -271,10 +260,7 @@
                 </div>`;
 
             let query = supabaseClient.from('iphone').select('*').order('id', { ascending: false });
-            
-            if (filtroEstado !== 'TODOS') {
-                query = query.eq('state', filtroEstado);
-            }
+            if (filtroEstado !== 'TODOS') query = query.eq('state', filtroEstado);
 
             const { data: iphones, error } = await query;
 
