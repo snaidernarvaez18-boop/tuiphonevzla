@@ -3,358 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TuiPhone VZLA - Marketplace Oficial de iPhones en Venezuela</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Cargamos la librería de Supabase de manera explícita -->
+    <title>TuiPhone VZLA - Gestión de Inventario</title>
+    <!-- Carga del cliente de Supabase desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, button { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background-color: #218838; }
+        #status { margin-top: 15px; font-weight: bold; }
+        ul { list-style: none; padding: 0; }
+        li { background: #f9f9f9; padding: 10px; margin-bottom: 8px; border-left: 4px solid #007bff; border-radius: 4px; }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-16 flex flex-col justify-between">
+<body>
 
-    <div>
-        <!-- Header Superior -->
-        <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50 border-b border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="cambiarVista('catalogo')">
-                    <div class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-500/30">
-                        <i class="fa-solid fa-mobile-screen-button text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-black tracking-tight text-white">TuiPhone <span class="text-blue-500">VZLA</span></h1>
-                        <p class="text-xs text-slate-400">Marketplace Nacional de Smartphones</p>
-                    </div>
-                </div>
+<div class="container">
+    <h1>TuiPhone VZLA - Panel</h1>
+    <p>Estado de conexión con Supabase: <span id="status">Verificando...</span></p>
 
-                <div class="w-full sm:w-72 relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="inputBuscar" oninput="filtrarPorTexto()" placeholder="Buscar modelo o zona..." class="w-full bg-slate-800 text-sm text-white pl-9 pr-4 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-blue-500 transition">
-                </div>
-
-                <button onclick="cambiarVista('formulario')" id="btnToggle" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/25 hover:from-blue-500 hover:to-indigo-500 transition flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle"></i> Publicar iPhone
-                </button>
-            </div>
-        </header>
-
-        <!-- Banner -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-4 text-center text-xs sm:text-sm font-medium shadow-inner flex justify-center items-center gap-6">
-            <span><i class="fa-solid fa-shield-halved"></i> Compra y Venta Segura</span>
-            <span class="hidden sm:inline">|</span>
-            <span><i class="fa-solid fa-location-dot"></i> Cubrimiento en los 24 Estados del País</span>
-            <span class="hidden sm:inline">|</span>
-            <span><i class="fa-solid fa-bolt"></i> Atención Directa con Vendedores</span>
-        </div>
-
-        <main class="max-w-7xl mx-auto px-4 mt-6">
-
-            <!-- VISTA CATÁLOGO -->
-            <section id="seccionCatalogo">
-                <div class="mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3"><i class="fa-solid fa-filter text-blue-600"></i> Filtrar por Estado en Venezuela</h2>
-                    <div id="contenedorFiltros" class="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
-                        <button onclick="filtrarUbicacion('TODOS')" id="btnTodos" class="filtro-btn px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-blue-600 text-white shadow-md shadow-blue-500/20 transition">🌍 Todo el país</button>
-                    </div>
-                </div>
-
-                <div id="gridProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <div class="col-span-full text-center py-16">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-                        <p class="text-slate-500 mt-2 text-sm font-medium">Conectando con el servidor en la nube...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VISTA FORMULARIO -->
-            <section id="seccionFormulario" class="hidden max-w-xl mx-auto bg-white p-8 shadow-xl rounded-2xl border border-slate-200">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-black text-slate-900">Publica tu iPhone</h2>
-                    <p class="text-xs text-slate-500 mt-1">Completa los datos técnicos para anunciar tu equipo a nivel nacional.</p>
-                </div>
-
-                <form onsubmit="publicarEnServidor(event)" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Modelo</label>
-                            <select id="inputModel" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
-                                <option>iPhone 11</option>
-                                <option>iPhone 11 Pro</option>
-                                <option>iPhone 12</option>
-                                <option>iPhone 12 Pro</option>
-                                <option>iPhone 13</option>
-                                <option>iPhone 13 Pro</option>
-                                <option>iPhone 13 Pro Max</option>
-                                <option>iPhone 14 Pro</option>
-                                <option>iPhone 14 Pro Max</option>
-                                <option>iPhone 15 Pro Max</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Capacidad</label>
-                            <select id="inputStorage" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
-                                <option>64GB</option>
-                                <option>128GB</option>
-                                <option>256GB</option>
-                                <option>512GB</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Salud de Batería (%)</label>
-                            <input type="number" id="inputBattery" min="50" max="100" placeholder="Ej: 88" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Precio ($ USD)</label>
-                            <input type="number" id="inputPrice" min="1" placeholder="Ej: 350" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Estado</label>
-                            <select id="inputState" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600"></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Zona / Municipio</label>
-                            <input type="text" id="inputZone" placeholder="Ej: San Diego, El Viñedo" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Foto del iPhone (Archivo o URL)</label>
-                        <input type="file" id="inputFile" accept="image/*" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2">
-                        <input type="url" id="inputImage" placeholder="O pega un enlace de imagen (https://...)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Detalles y Especificaciones</label>
-                        <textarea id="inputDetails" rows="3" placeholder="Ej: Libre de fábrica, Face ID activo..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required></textarea>
-                    </div>
-
-                    <button type="submit" id="btnSubmit" class="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-600/30 hover:bg-emerald-500 transition">
-                        Publicar en el Servidor
-                    </button>
-                </form>
-            </section>
-        </main>
+    <div class="form-group">
+        <label for="modelo">Modelo de iPhone:</label>
+        <input type="text" id="modelo" placeholder="Ej: iPhone 11 Pro">
+    </div>
+    
+    <div class="form-group">
+        <label for="precio">Precio ($):</label>
+        <input type="number" id="precio" placeholder="Ej: 250">
     </div>
 
-    <footer class="bg-slate-900 text-slate-400 py-6 mt-12 border-t border-slate-800 text-center text-xs">
-        <p class="font-bold text-slate-300">TuiPhone VZLA &copy; 2026</p>
-        <p class="mt-1">El mercado especializado en telefonía móvil con cobertura en todo el territorio nacional.</p>
-    </footer>
+    <button onclick="agregarItem()">Guardar en Supabase</button>
 
-    <script>
-        // Inicialización segura del cliente Supabase
-        const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt'; // Asegúrate de colocar tu clave aquí
+    <h2>Inventario Actual:</h2>
+    <ul id="lista-items">
+        <li>Cargando datos...</li>
+    </ul>
+</div>
 
-        let supabaseClient = null;
+<script>
+    // Configuración de Supabase
+    const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
+    const SUPABASE_ANON_KEY = 'PEGAR_AQUI_TU_CLAVE_PUBLICABLE_DE_SUPABASE'; // Reemplaza esto con la clave que copiaste
 
+    // Inicializar el cliente de Supabase
+    const { createClient } = supabase;
+    const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Función para verificar conexión y cargar datos
+    async function cargarDatos() {
+        const statusEl = document.getElementById('status');
         try {
-            if (window.supabase) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else {
-                console.error("La librería de Supabase no cargó correctamente.");
-            }
-        } catch (e) {
-            console.error("Error al inicializar Supabase:", e);
-        }
-
-        const estadosVenezuela = [
-            "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar", 
-            "Carabobo", "Cojedes", "Delta Amacuro", "Distrito Capital", "Falcón", 
-            "Guárico", "Lara", "Mérida", "Miranda", "Monagas", "Nueva Esparta", 
-            "Portuguesa", "Sucre", "Táchira", "Trujillo", "La Guaira", "Yaracuy", "Zulia"
-        ];
-
-        let listaIphonesGlobal = [];
-
-        document.addEventListener("DOMContentLoaded", () => {
-            const selectState = document.getElementById('inputState');
-            const contenedorFiltros = document.getElementById('contenedorFiltros');
-
-            estadosVenezuela.forEach(estado => {
-                const opt = document.createElement('option');
-                opt.value = estado;
-                opt.innerText = estado;
-                selectState.appendChild(opt);
-
-                const btn = document.createElement('button');
-                btn.onclick = () => filtrarUbicacion(estado, btn);
-                btn.className = "filtro-btn px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 shadow-sm transition";
-                btn.innerText = `📍 ${estado}`;
-                contenedorFiltros.appendChild(btn);
-            });
-
-            cargarProductos();
-        });
-
-        function cambiarVista(vista) {
-            const cat = document.getElementById('seccionCatalogo');
-            const form = document.getElementById('seccionFormulario');
-            const btn = document.getElementById('btnToggle');
-
-            if (vista === 'formulario') {
-                cat.classList.add('hidden');
-                form.classList.remove('hidden');
-                btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Ver Catálogo';
-                btn.className = 'bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg hover:bg-slate-700 transition flex items-center gap-2';
-            } else {
-                form.classList.add('hidden');
-                cat.classList.remove('hidden');
-                btn.innerHTML = '<i class="fa-solid fa-plus-circle"></i> Publicar iPhone';
-                btn.className = 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/25 hover:from-blue-500 hover:to-indigo-500 transition flex items-center gap-2';
-                cargarProductos();
-            }
-        }
-
-        async function publicarEnServidor(event) {
-            event.preventDefault();
-            if (!supabaseClient) {
-                alert('El cliente de Supabase no está inicializado.');
-                return;
-            }
-
-            const btn = document.getElementById('btnSubmit');
-            btn.innerText = "Guardando equipo...";
-            btn.disabled = true;
-
-            const fileInput = document.getElementById('inputFile');
-            const urlInput = document.getElementById('inputImage').value;
-            let imagenFinal = urlInput || 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5';
-
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                imagenFinal = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.readAsDataURL(file);
-                });
-            }
-
-            const nuevoiPhone = {
-                model: document.getElementById('inputModel').value,
-                storage: document.getElementById('inputStorage').value,
-                battery: document.getElementById('inputBattery').value,
-                price: document.getElementById('inputPrice').value,
-                state: document.getElementById('inputState').value,
-                zone: document.getElementById('inputZone').value,
-                details: document.getElementById('inputDetails').value,
-                image_url: imagenFinal
-            };
-
-            const { error } = await supabaseClient.from('iphone').insert([nuevoiPhone]);
-
+            const { data, error } = await _supabase.from('iphone').select('*');
+            
             if (error) {
-                alert('Error al guardar en el servidor: ' + error.message);
-                btn.innerText = "Publicar en el Servidor";
-                btn.disabled = false;
-            } else {
-                alert('¡iPhone publicado exitosamente en el servidor en la nube!');
-                document.querySelector('form').reset();
-                cambiarVista('catalogo');
+                throw error;
             }
-        }
 
-        async function cargarProductos(filtroEstado = 'TODOS') {
-            const grid = document.getElementById('gridProductos');
-            grid.innerHTML = `
-                <div class="col-span-full text-center py-16">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-                    <p class="text-slate-500 mt-2 text-sm font-medium">Buscando equipos en el servidor...</p>
-                </div>`;
+            statusEl.textContent = 'Conectado exitosamente ✅';
+            statusEl.style.color = 'green';
 
-            if (!supabaseClient) {
-                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-8 font-medium">Error: Supabase no está inicializado.</p>`;
+            const listaEl = document.getElementById('lista-items');
+            listaEl.innerHTML = '';
+
+            if (data.length === 0) {
+                listaEl.innerHTML = '<li>No hay registros en la tabla iphone todavía.</li>';
                 return;
             }
 
-            let query = supabaseClient.from('iphone').select('*').order('id', { ascending: false });
-            if (filtroEstado !== 'TODOS') query = query.eq('state', filtroEstado);
-
-            const { data: iphones, error } = await query;
-
-            if (error) {
-                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-8 font-medium">Error cargando datos del servidor: ${error.message}</p>`;
-                return;
-            }
-
-            listaIphonesGlobal = iphones || [];
-            renderizarTarjetas(listaIphonesGlobal);
-        }
-
-        function filtrarUbicacion(estado, botonElemento) {
-            document.querySelectorAll('.filtro-btn').forEach(b => {
-                b.className = "filtro-btn px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 shadow-sm transition";
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `Modelo: ${item.modelo || item.name || 'Sin nombre'} - Precio: $${item.precio || item.price || 0}`;
+                listaEl.appendChild(li);
             });
-            if(botonElemento) {
-                botonElemento.className = "filtro-btn px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-blue-600 text-white shadow-md shadow-blue-500/20 transition";
-            } else {
-                document.getElementById('btnTodos').className = "filtro-btn px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-blue-600 text-white shadow-md shadow-blue-500/20 transition";
-            }
-            cargarProductos(estado);
+
+        } catch (err) {
+            console.error('Error de conexión:', err);
+            statusEl.textContent = 'Error de conexión: ' + err.message;
+            statusEl.style.color = 'red';
+        }
+    }
+
+    // Función para insertar un nuevo registro
+    async function agregarItem() {
+        const modelo = document.getElementById('modelo').value;
+        const precio = parseFloat(document.getElementById('precio').value);
+
+        if (!modelo || isNaN(precio)) {
+            alert('Por favor completa todos los campos correctamente.');
+            return;
         }
 
-        function filtrarPorTexto() {
-            const texto = document.getElementById('inputBuscar').value.toLowerCase();
-            const filtrados = listaIphonesGlobal.filter(item => 
-                (item.model && item.model.toLowerCase().includes(texto)) || 
-                (item.zone && item.zone.toLowerCase().includes(texto)) ||
-                (item.details && item.details.toLowerCase().includes(texto))
-            );
-            renderizarTarjetas(filtrados);
-        }
+        const { data, error } = await _supabase
+            .from('iphone')
+            .insert([{ modelo: modelo, precio: precio }]);
 
-        function renderizarTarjetas(iphones) {
-            const grid = document.getElementById('gridProductos');
-            if (!iphones || iphones.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-slate-200">
-                        <i class="fa-solid fa-box-open text-4xl text-slate-300 mb-2"></i>
-                        <p class="text-slate-500 font-medium">No hay iPhones publicados bajo estos criterios.</p>
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = '';
-            iphones.forEach(iphone => {
-                const card = document.createElement('div');
-                card.className = "bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group";
-                card.innerHTML = `
-                    <div class="relative overflow-hidden bg-slate-100 h-52">
-                        <img src="${iphone.image_url || 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5'}" alt="iPhone" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                            📍 ${iphone.state || 'N/A'}
-                        </span>
-                    </div>
-                    <div class="p-5 flex flex-col flex-grow justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">${iphone.storage || ''}</span>
-                                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-location-crosshairs"></i> ${iphone.zone || 'General'}</span>
-                            </div>
-                            <h3 class="font-extrabold text-lg text-slate-900 mt-1">${iphone.model || 'iPhone'}</h3>
-                            <p class="text-slate-600 text-xs mt-1 font-medium"><i class="fa-solid fa-battery-three-quarters text-emerald-500"></i> Batería: ${iphone.battery || '100'}%</p>
-                            <p class="text-xs text-slate-500 mt-2 line-clamp-2">${iphone.details || ''}</p>
-                        </div>
-                        <div class="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
-                            <div>
-                                <span class="text-[10px] uppercase font-bold text-slate-400 block">Precio</span>
-                                <span class="text-xl font-black text-emerald-600">$${iphone.price || '0'}</span>
-                            </div>
-                            <button onclick="alert('Abriendo comunicación directa con el vendedor en ${iphone.state}, ${iphone.zone}...');" class="bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-md shadow-blue-600/25 hover:bg-blue-500 transition flex items-center gap-1.5">
-                                <i class="fa-brands fa-whatsapp"></i> Contactar
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+        if (error) {
+            alert('Error al guardar: ' + error.message);
+        } else {
+            alert('¡Guardado con éxito!');
+            document.getElementById('modelo').value = '';
+            document.getElementById('precio').value = '';
+            cargarDatos();
         }
-    </script>
+    }
+
+    // Ejecutar al cargar la página
+    cargarDatos();
+</script>
+
 </body>
 </html>
