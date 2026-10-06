@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuiPhoneVZLA - Marketplace de iPhones</title>
+    <!-- Tailwind CSS para un diseño ultra moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen pb-12">
+
+    <!-- Header / Barra de navegación -->
+    <header class="bg-white shadow-sm border-b p-4 max-w-6xl mx-auto rounded-b-xl flex justify-between items-center">
+        <h1 class="text-xl font-extrabold text-blue-600">📱 TuiPhone VZLA</h1>
+        <button onclick="cambiarVista()" id="btnToggle" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-blue-700 transition">
+            + Publicar iPhone
+        </button>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 mt-6">
+
+        <!-- VISTA 1: CATÁLOGO Y FILTROS -->
+        <section id="seccionCatalogo">
+            <!-- Filtros por Ubicación -->
+            <div class="mb-6">
+                <h2 class="text-xl font-bold mb-2">Filtrar por Ubicación en Venezuela</h2>
+                <div class="flex gap-2 overflow-x-auto pb-2">
+                    <button onclick="filtrarUbicacion('TODAS')" class="filtro-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-blue-600 text-white shadow">🌍 Todo el país</button>
+                    <button onclick="filtrarUbicacion('Caracas')" class="filtro-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-white text-gray-700 border hover:bg-gray-100">📍 Caracas</button>
+                    <button onclick="filtrarUbicacion('Valencia')" class="filtro-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-white text-gray-700 border hover:bg-gray-100">📍 Valencia</button>
+                    <button onclick="filtrarUbicacion('Maracaibo')" class="filtro-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-white text-gray-700 border hover:bg-gray-100">📍 Maracaibo</button>
+                    <button onclick="filtrarUbicacion('Barquisimeto')" class="filtro-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-white text-gray-700 border hover:bg-gray-100">📍 Barquisimeto</button>
+                </div>
+            </div>
+
+            <!-- Listado de Productos -->
+            <div id="gridProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Tarjeta de ejemplo 1 -->
+                <div class="bg-white border rounded-xl p-4 shadow-sm producto-card" data-ciudad="Caracas">
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-semibold">📍 Caracas (Chacao)</span>
+                    <h3 class="font-bold text-lg mt-2">iPhone 13 Pro - 128GB</h3>
+                    <p class="text-gray-600 text-sm">Batería: 89% | Libre de fábrica</p>
+                    <p class="text-xs text-gray-500 mt-1">Face ID activo, incluye caja y cable original.</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-2xl font-extrabold text-green-600">$420</span>
+                        <button onclick="alert('Abriendo chat interno con el vendedor...')" class="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition">
+                            💬 Enviar Mensaje
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de ejemplo 2 -->
+                <div class="bg-white border rounded-xl p-4 shadow-sm producto-card" data-ciudad="Valencia">
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-semibold">📍 Valencia (El Viñedo)</span>
+                    <h3 class="font-bold text-lg mt-2">iPhone 12 - 64GB</h3>
+                    <p class="text-gray-600 text-sm">Batería: 84% | Detalle estético menor</p>
+                    <p class="text-xs text-gray-500 mt-1">Todo operativo, entrega personal en CC.</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-2xl font-extrabold text-green-600">$290</span>
+                        <button onclick="alert('Abriendo chat interno con el vendedor...')" class="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition">
+                            💬 Enviar Mensaje
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 2: FORMULARIO DE PUBLICACIÓN -->
+        <section id="seccionFormulario" class="hidden max-w-xl mx-auto bg-white p-6 shadow-md rounded-xl border">
+            <h2 class="text-2xl font-bold mb-4">Publica tu iPhone</h2>
+            <form onsubmit="publicarIPhone(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Modelo</label>
+                        <select id="inputModel" class="w-full border rounded p-2 mt-1">
+                            <option>iPhone 11</option>
+                            <option>iPhone 12</option>
+                            <option>iPhone 13</option>
+                            <option>iPhone 13 Pro Max</option>
+                            <option>iPhone 14 Pro</option>
+                            <option>iPhone 15</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Capacidad</label>
+                        <select id="inputStorage" class="w-full border rounded p-2 mt-1">
+                            <option>64GB</option>
+                            <option>128GB</option>
+                            <option>256GB</option>
+                            <option>512GB</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Salud de Batería (%)</label>
+                        <input type="number" id="inputBattery" placeholder="Ej: 88" class="w-full border rounded p-2 mt-1" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Precio ($ USD)</label>
+                        <input type="number" id="inputPrice" placeholder="Ej: 350" class="w-full border rounded p-2 mt-1" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">Estado</label>
+                        <select id="inputState" class="w-full border rounded p-2 mt-1">
+                            <option>Caracas</option>
+                            <option>Valencia</option>
+                            <option>Maracaibo</option>
+                            <option>Barquisimeto</option>
+                            <option>Aragua</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Zona / Municipio</label>
+                        <input type="text" id="inputZone" placeholder="Ej: Chacao, El Viñedo" class="w-full border rounded p-2 mt-1" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium">Detalles específicos</label>
+                    <textarea id="inputDetails" rows="3" placeholder="Ej: Libre de fábrica, Face ID activo..." class="w-full border rounded p-2 mt-1" required></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">
+                    Guardar Publicación
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+    <!-- Script de control interactivo -->
+    <script>
+        let modoFormulario = false;
+
+        function cambiarVista() {
+            modoFormulario = !modoFormulario;
+            const cat = document.getElementById('seccionCatalogo');
+            const form = document.getElementById('seccionFormulario');
+            const btn = document.getElementById('btnToggle');
+
+            if (modoFormulario) {
+                cat.classList.add('hidden');
+                form.classList.remove('hidden');
+                btn.innerText = '← Ver Catálogo';
+                btn.className = 'bg-gray-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-gray-700 transition';
+            } else {
+                form.classList.add('hidden');
+                cat.classList.remove('hidden');
+                btn.innerText = '+ Publicar iPhone';
+                btn.className = 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-blue-700 transition';
+            }
+        }
+
+        function filtrarUbicacion(ciudadSeleccionada) {
+            const tarjetas = document.querySelectorAll('.producto-card');
+            tarjetas.forEach(card => {
+                const ciudadCard = card.getAttribute('data-ciudad');
+                if (ciudadSeleccionada === 'TODAS' || ciudadCard === ciudadSeleccionada) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function publicarIPhone(event) {
+            event.preventDefault();
+            alert('¡iPhone publicado con éxito! Ahora aparecerá en el catálogo.');
+            cambiarVista();
+        }
+    </script>
+</body>
+</html>
