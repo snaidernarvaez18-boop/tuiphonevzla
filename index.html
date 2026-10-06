@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TuiPhone VZLA - Marketplace Profesional</title>
+    <title>TuiPhone VZLA - Marketplace Profesional con Garantía</title>
     <!-- Carga del cliente de Supabase desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -26,7 +26,7 @@
             color: var(--ebay-dark);
         }
 
-        /* HEADER TIPO EBAY */
+        /* HEADER TIPO EBAY CON LOGO MEJORADO */
         header {
             background: #ffffff;
             border-bottom: 1px solid var(--ebay-border);
@@ -48,17 +48,65 @@
             gap: 15px;
         }
 
-        .logo-area {
+        .logo-container {
             display: flex;
-            align-items: baseline;
-            gap: 8px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* LOGO VECTORIAL DISEÑADO */
+        .brand-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--ebay-blue), #004b9b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 3px 6px rgba(0,100,210,0.3);
+        }
+
+        .brand-logo-icon::before {
+            content: '';
+            width: 18px;
+            height: 28px;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            position: absolute;
+        }
+
+        .brand-logo-icon::after {
+            content: '✓';
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            background: var(--ebay-green);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .logo-area h1 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 900;
             letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .logo-subtext {
+            font-size: 0.7rem;
+            color: var(--ebay-gray);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .logo-tui { color: var(--ebay-blue); }
@@ -68,7 +116,7 @@
         .search-bar-container {
             display: flex;
             flex-grow: 1;
-            max-width: 650px;
+            max-width: 550px;
             border: 2px solid var(--ebay-dark);
             border-radius: 25px;
             overflow: hidden;
@@ -97,7 +145,7 @@
             background-color: var(--ebay-blue);
             color: white;
             border: none;
-            padding: 0 25px;
+            padding: 0 20px;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.2s;
@@ -168,10 +216,10 @@
             margin-bottom: 15px;
         }
 
-        /* GRILLA DE PRODUCTOS TIPO EBAY */
+        /* GRILLA DE PRODUCTOS */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
 
@@ -220,6 +268,34 @@
             font-size: 0.85rem;
         }
 
+        /* ESTRUCTURA VISUAL DE SELLOS DE GARANTÍA EN LA TARJETA */
+        .warranty-badges {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .badge-seal {
+            background: rgba(134, 184, 23, 0.92);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .badge-seal.original {
+            background: rgba(0, 100, 210, 0.92);
+        }
+
         .product-body {
             padding: 14px;
             display: flex;
@@ -251,7 +327,7 @@
             font-size: 0.8rem;
             color: #555;
             background: #f9f9f9;
-            padding: 4px 8px;
+            padding: 6px 8px;
             border-radius: 4px;
             margin-bottom: 10px;
             border-left: 3px solid var(--ebay-yellow);
@@ -348,6 +424,12 @@
             font-size: 0.95rem;
         }
 
+        .form-group input[type="file"] {
+            padding: 8px;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
         .form-group input:focus, .form-group textarea:focus {
             border-color: var(--ebay-blue);
             outline: none;
@@ -385,8 +467,12 @@
 <!-- ENCABEZADO ESTILO EBAY -->
 <header>
     <div class="header-top">
-        <div class="logo-area">
-            <h1><span class="logo-tui">Tui</span><span class="logo-phone">Phone</span> <span class="logo-vzla">VZLA</span></h1>
+        <div class="logo-container">
+            <div class="brand-logo-icon"></div>
+            <div class="logo-area">
+                <h1><span class="logo-tui">Tui</span><span class="logo-phone">Phone</span> <span class="logo-vzla">VZLA</span></h1>
+                <span class="logo-subtext">Marketplace Certificado</span>
+            </div>
         </div>
         
         <div class="search-bar-container">
@@ -466,11 +552,11 @@
             </div>
 
             <div class="form-group">
-                <label for="imagen">Enlace de la Foto (URL de imagen):</label>
-                <input type="url" id="imagen" placeholder="https://ejemplo.com/foto-iphone.jpg">
+                <label for="imagen-archivo">Foto del equipo (JPG, PNG, WebP):</label>
+                <input type="file" id="imagen-archivo" accept="image/png, image/jpeg, image/webp">
             </div>
 
-            <button class="btn-submit-modal" onclick="agregarItem()">Publicar Anuncio</button>
+            <button class="btn-submit-modal" onclick="agregarItem()">Publicar Anuncio Verificado</button>
         </div>
     </div>
 </div>
@@ -548,7 +634,7 @@
         filtrarProductos();
     }
 
-    // Renderizar tarjetas en pantalla
+    // Renderizar tarjetas en pantalla con estructura de sellos de garantía
     function renderizarGrilla(data) {
         const listaEl = document.getElementById('lista-items');
         const contadorEl = document.getElementById('contador-resultados');
@@ -573,6 +659,10 @@
 
             card.innerHTML = `
                 <div class="product-img-box">
+                    <div class="warranty-badges">
+                        <span class="badge-seal">🛡️ Garantía 90 Días</span>
+                        <span class="badge-seal original">⭐ 100% Original</span>
+                    </div>
                     ${imagen ? `<img src="${imagen}" alt="${modelo}" onerror="this.parentElement.innerHTML='<span class=\'no-img-text\'>Imagen no disponible</span>'">` : `<span class="no-img-text">Sin imagen</span>`}
                 </div>
                 <div class="product-body">
@@ -581,7 +671,7 @@
                     <div class="product-details-snippet">${detalles}</div>
                     <div class="product-price-box">
                         <span class="product-price">$${precio}</span>
-                        <span class="product-shipping">Envío seguro</span>
+                        <span class="product-shipping">Envío asegurado</span>
                     </div>
                 </div>
             `;
@@ -589,27 +679,45 @@
         });
     }
 
-    // Insertar un nuevo producto
+    // Insertar un nuevo producto transformando el archivo local (JPG/PNG) a base64
     async function agregarItem() {
         const modelo = document.getElementById('modelo').value.trim();
         const precio = parseFloat(document.getElementById('precio').value);
         const ubicacion = document.getElementById('ubicacion').value;
         const detalles = document.getElementById('detalles').value.trim();
-        const imagen = document.getElementById('imagen').value.trim();
+        const inputFile = document.getElementById('imagen-archivo');
 
         if (!modelo || isNaN(precio)) {
             alert('Por favor completa el modelo y un precio válido.');
             return;
         }
 
-        const nuevoIphone = {
-            modelo: modelo,
-            precio: precio,
-            ubicacion: ubicacion,
-            detalles: detalles || 'Sin detalles adicionales',
-            imagen: imagen || ''
+        // Función auxiliar para convertir archivo local a Base64
+        const procesarImagenYGuardar = (base64Imagen) => {
+            const nuevoIphone = {
+                modelo: modelo,
+                precio: precio,
+                ubicacion: ubicacion,
+                detalles: detalles || 'Equipo verificado y testeado',
+                imagen: base64Imagen
+            };
+
+            enviarASupabase(nuevoIphone);
         };
 
+        if (inputFile.files && inputFile.files[0]) {
+            const file = inputFile.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                procesarImagenYGuardar(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            procesarImagenYGuardar('');
+        }
+    }
+
+    async function enviarASupabase(nuevoIphone) {
         const { data, error } = await _supabase
             .from('iphone')
             .insert([nuevoIphone]);
@@ -617,13 +725,13 @@
         if (error) {
             alert('Error al publicar: ' + error.message);
         } else {
-            alert('¡Tu iPhone ha sido publicado con éxito en el marketplace!');
+            alert('¡Tu iPhone ha sido publicado con éxito y sellos de garantía!');
             cerrarModal();
             // Limpiar inputs del modal
             document.getElementById('modelo').value = '';
             document.getElementById('precio').value = '';
             document.getElementById('detalles').value = '';
-            document.getElementById('imagen').value = '';
+            document.getElementById('imagen-archivo').value = '';
             
             cargarDatos();
         }
