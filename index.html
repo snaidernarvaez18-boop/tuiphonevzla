@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TuiPhone VZLA - Marketplace Oficial de iPhones en Venezuela</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cargamos la librería de Supabase de manera explícita -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -147,11 +148,21 @@
     </footer>
 
     <script>
-        // Configuración con tu URL y la nueva Clave Pública de Supabase
+        // Inicialización segura del cliente Supabase
         const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
+        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt'; // Asegúrate de colocar tu clave aquí
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient = null;
+
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                console.error("La librería de Supabase no cargó correctamente.");
+            }
+        } catch (e) {
+            console.error("Error al inicializar Supabase:", e);
+        }
 
         const estadosVenezuela = [
             "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar", 
@@ -203,13 +214,18 @@
 
         async function publicarEnServidor(event) {
             event.preventDefault();
+            if (!supabaseClient) {
+                alert('El cliente de Supabase no está inicializado.');
+                return;
+            }
+
             const btn = document.getElementById('btnSubmit');
             btn.innerText = "Guardando equipo...";
             btn.disabled = true;
 
             const fileInput = document.getElementById('inputFile');
             const urlInput = document.getElementById('inputImage').value;
-            let imagenFinal = urlInput;
+            let imagenFinal = urlInput || 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5';
 
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
@@ -218,13 +234,6 @@
                     reader.onload = (e) => resolve(e.target.result);
                     reader.readAsDataURL(file);
                 });
-            }
-
-            if (!imagenFinal) {
-                alert('Por favor selecciona una foto o introduce una URL.');
-                btn.innerText = "Publicar en el Servidor";
-                btn.disabled = false;
-                return;
             }
 
             const nuevoiPhone = {
@@ -259,6 +268,11 @@
                     <p class="text-slate-500 mt-2 text-sm font-medium">Buscando equipos en el servidor...</p>
                 </div>`;
 
+            if (!supabaseClient) {
+                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-8 font-medium">Error: Supabase no está inicializado.</p>`;
+                return;
+            }
+
             let query = supabaseClient.from('iphone').select('*').order('id', { ascending: false });
             if (filtroEstado !== 'TODOS') query = query.eq('state', filtroEstado);
 
@@ -288,9 +302,9 @@
         function filtrarPorTexto() {
             const texto = document.getElementById('inputBuscar').value.toLowerCase();
             const filtrados = listaIphonesGlobal.filter(item => 
-                item.model.toLowerCase().includes(texto) || 
-                item.zone.toLowerCase().includes(texto) ||
-                item.details.toLowerCase().includes(texto)
+                (item.model && item.model.toLowerCase().includes(texto)) || 
+                (item.zone && item.zone.toLowerCase().includes(texto)) ||
+                (item.details && item.details.toLowerCase().includes(texto))
             );
             renderizarTarjetas(filtrados);
         }
@@ -312,27 +326,27 @@
                 card.className = "bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group";
                 card.innerHTML = `
                     <div class="relative overflow-hidden bg-slate-100 h-52">
-                        <img src="${iphone.image_url}" alt="iPhone" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <img src="${iphone.image_url || 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5'}" alt="iPhone" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                         <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                            📍 ${iphone.state}
+                            📍 ${iphone.state || 'N/A'}
                         </span>
                     </div>
                     <div class="p-5 flex flex-col flex-grow justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">${iphone.storage}</span>
-                                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-location-crosshairs"></i> ${iphone.zone}</span>
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">${iphone.storage || ''}</span>
+                                <span class="text-xs text-slate-400 font-medium"><i class="fa-solid fa-location-crosshairs"></i> ${iphone.zone || 'General'}</span>
                             </div>
-                            <h3 class="font-extrabold text-lg text-slate-900 mt-1">${iphone.model}</h3>
-                            <p class="text-slate-600 text-xs mt-1 font-medium"><i class="fa-solid fa-battery-three-quarters text-emerald-500"></i> Batería: ${iphone.battery}%</p>
-                            <p class="text-xs text-slate-500 mt-2 line-clamp-2">${iphone.details}</p>
+                            <h3 class="font-extrabold text-lg text-slate-900 mt-1">${iphone.model || 'iPhone'}</h3>
+                            <p class="text-slate-600 text-xs mt-1 font-medium"><i class="fa-solid fa-battery-three-quarters text-emerald-500"></i> Batería: ${iphone.battery || '100'}%</p>
+                            <p class="text-xs text-slate-500 mt-2 line-clamp-2">${iphone.details || ''}</p>
                         </div>
                         <div class="flex items-center justify-between mt-5 pt-4 border-t border-slate-100">
                             <div>
                                 <span class="text-[10px] uppercase font-bold text-slate-400 block">Precio</span>
-                                <span class="text-xl font-black text-emerald-600">$${iphone.price}</span>
+                                <span class="text-xl font-black text-emerald-600">$${iphone.price || '0'}</span>
                             </div>
-                            <button onclick="alert('Abriendo comunicación directa con el vendedor en ${iphone.state}, ${iphone.zone}...');" class="bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-md shadow-blue-600/20 hover:bg-blue-500 transition flex items-center gap-1.5">
+                            <button onclick="alert('Abriendo comunicación directa con el vendedor en ${iphone.state}, ${iphone.zone}...');" class="bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-md shadow-blue-600/25 hover:bg-blue-500 transition flex items-center gap-1.5">
                                 <i class="fa-brands fa-whatsapp"></i> Contactar
                             </button>
                         </div>
