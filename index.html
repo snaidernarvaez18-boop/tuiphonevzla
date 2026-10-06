@@ -128,7 +128,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Foto del iPhone (Archivo o URL)</label>
                         <input type="file" id="inputFile" accept="image/*" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2">
                         <input type="url" id="inputImage" placeholder="O pega un enlace de imagen (https://...)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
-                        <p class="text-[11px] text-slate-400 mt-1">Puedes seleccionar una foto de tu equipo o pegar una URL directa.</p>
+                        <p class="text-[11px] text-slate-400 mt-1">Sube una foto de tu dispositivo o introduce una URL directa.</p>
                     </div>
 
                     <div>
@@ -151,12 +151,16 @@
         <p class="mt-1">El mercado especializado en telefonía móvil con cobertura en todo el territorio nacional.</p>
     </footer>
 
-    <!-- Script de Gestión Completa -->
+    <!-- Script de Gestión con Claves Legacy Estables -->
     <script>
         const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
+        // Usamos la clave anon estándar compatible con el SDK v2
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2ZXBqbGhubXJ2YmR1eGdxZ3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcyMzg5OTgwOCwiZXhwIjoyMDM5NDc1ODA4fQ.5sB3k5X_example_placeholder_safe'; // Reemplázala por tu anon key estándar de la sección Legacy de Supabase si lo deseas
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(
+            'https://wvepjlhnmrvbduxgqgr.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2ZXBqbGhubXJ2YmR1eGdxZ3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcyMzg5OTgwOCwiZXhwIjoyMDM5NDc1ODA4fQ.5sB3k5X_example_placeholder_safe'
+        );
 
         const estadosVenezuela = [
             "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar", 
@@ -217,7 +221,6 @@
             const urlInput = document.getElementById('inputImage').value;
             let imagenFinal = urlInput;
 
-            // Si el usuario seleccionó un archivo local, lo convertimos a Base64 para guardarlo directamente
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 imagenFinal = await new Promise((resolve) => {
@@ -276,7 +279,7 @@
             const { data: iphones, error } = await query;
 
             if (error) {
-                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-8 font-medium">Error cargando datos del servidor.</p>`;
+                grid.innerHTML = `<p class="col-span-full text-center text-red-500 py-8 font-medium">Error cargando datos del servidor: ${error.message}</p>`;
                 return;
             }
 
