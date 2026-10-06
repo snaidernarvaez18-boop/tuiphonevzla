@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TuiPhone VZLA - Marketplace Certificado de iPhones en Venezuela</title>
-    <!-- Carga del cliente de Supabase desde CDN -->
+    <title>TuiPhone VZLA - Marketplace Certificado</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -19,604 +18,197 @@
         }
 
         body {
-            font-family: "Amazon Ember", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
             background-color: var(--light-bg);
             color: var(--text-main);
         }
 
-        /* HEADER */
         header {
             background-color: var(--dark-bg);
             color: white;
             padding: 10px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-        }
-
-        .header-main {
-            display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
+            position: sticky; top: 0; z-index: 1000;
         }
 
         .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
         }
 
         .brand-logo {
-            width: 38px;
-            height: 38px;
+            width: 38px; height: 38px;
             background: linear-gradient(135deg, var(--primary-orange), #e47911);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: white;
-            box-shadow: 0 2px 5px rgba(255,153,0,0.4);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2rem; color: white;
         }
 
-        .brand-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin: 0;
-        }
-
-        .brand-title span.tui { color: #ffffff; }
+        .brand-title { font-size: 1.4rem; font-weight: 800; margin: 0; }
         .brand-title span.phone { color: var(--primary-orange); }
         .brand-title span.vzla { color: var(--ebay-green); }
 
-        /* BUSCADOR */
         .search-container {
-            display: flex;
-            flex-grow: 1;
-            max-width: 650px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 2px solid transparent;
-            transition: border 0.2s;
+            display: flex; flex-grow: 1; max-width: 500px; border-radius: 6px; overflow: hidden;
         }
+        .search-container input { flex-grow: 1; border: none; padding: 10px 15px; outline: none; font-size: 0.95rem; }
+        .btn-search { background-color: var(--primary-orange); border: none; padding: 0 15px; cursor: pointer; font-size: 1.1rem; }
 
-        .search-container:focus-within {
-            border-color: var(--primary-orange);
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .btn-action {
+            background-color: #ffd814; color: #0f1111; border: 1px solid #fcd200;
+            padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem;
         }
+        .btn-action:hover { background-color: #f7ca00; }
 
-        .search-container select {
-            background: #f3f3f3;
-            border: none;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            outline: none;
-            border-right: 1px solid #ccc;
-        }
+        .main-wrapper { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
 
-        .search-container input {
-            flex-grow: 1;
-            border: none;
-            padding: 10px 15px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .btn-search {
-            background-color: var(--primary-orange);
-            border: none;
-            padding: 0 20px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-search:hover { background-color: #fa8900; }
-
-        .btn-vender {
-            background-color: #ffd814;
-            color: #0f1111;
-            border: 1px solid #fcd200;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.1s, background-color 0.2s;
-        }
-
-        .btn-vender:hover {
-            background-color: #f7ca00;
-            transform: scale(1.03);
-        }
-
-        /* BANNER DE OFERTAS */
-        .promo-banner {
-            background: linear-gradient(90deg, #232f3e, #37475a);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--primary-orange);
-        }
-
-        .promo-banner h2 {
-            margin: 0 0 8px 0;
-            font-size: 1.6rem;
-            color: #febd69;
-        }
-
-        .promo-banner p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #ccc;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
-        .main-wrapper {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .filters-bar {
-            background: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .results-count {
-            font-weight: bold;
-            color: var(--text-main);
-        }
-
-        .filter-group select {
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background: #fff;
-            outline: none;
-        }
-
-        /* GRILLA DE PRODUCTOS */
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
         }
 
         .product-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            position: relative;
+            background: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; transition: transform 0.2s;
         }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-            border-color: var(--primary-orange);
+        .card-img { width: 100%; height: 200px; object-fit: cover; background: #f0f0f0; }
+        .card-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-title { font-size: 1rem; font-weight: 700; margin: 0 0 5px 0; }
+        .card-specs { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px; }
+        .card-price { font-size: 1.3rem; font-weight: 800; color: #b12704; margin-top: auto; }
+        .seller-info { font-size: 0.75rem; color: #555; margin-bottom: 8px; font-style: italic; }
+
+        .card-buttons { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-card {
+            flex: 1; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;
         }
+        .btn-chat { background-color: #0066c0; color: white; }
+        .btn-chat:hover { background-color: #004b91; }
 
-        .card-img-container {
-            width: 100%;
-            height: 220px;
-            background: #f7f7f7;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .card-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .product-card:hover .card-img-container img {
-            transform: scale(1.06);
-        }
-
-        .badges-overlay {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 10;
-        }
-
-        .badge {
-            background: rgba(134, 184, 23, 0.92);
-            color: white;
-            font-size: 0.65rem;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .badge.original {
-            background: rgba(0, 102, 192, 0.92);
-        }
-
-        .card-body {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 0 0 5px 0;
-        }
-
-        .card-specs {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-
-        .card-location {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .card-snippet {
-            font-size: 0.8rem;
-            background: #fdf8ed;
-            border: 1px solid #fef3d6;
-            padding: 6px 8px;
-            border-radius: 4px;
-            margin-bottom: 12px;
-            color: #555;
-        }
-
-        .card-price-row {
-            margin-top: auto;
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-        }
-
-        .price-tag {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #b12704;
-        }
-
-        .shipping-tag {
-            font-size: 0.75rem;
-            color: #007600;
-            font-weight: bold;
-        }
-
-        /* MODAL */
+        /* MODALES GENERALES */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            backdrop-filter: blur(2px);
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 15px;
         }
-
         .modal-content {
-            background: #fff;
-            width: 100%;
-            max-width: 520px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            animation: modalFadeIn 0.25s ease-out;
+            background: #fff; width: 100%; max-width: 480px; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); max-height: 90vh; display: flex; flex-direction: column;
         }
+        .modal-header { background: var(--dark-bg); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
+        .modal-body { padding: 20px; overflow-y: auto; }
 
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-row { margin-bottom: 12px; }
+        .form-row label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; }
+        .form-row input, .form-row select, .form-row textarea {
+            width: 100%; padding: 9px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; font-size: 0.9rem;
         }
+        .btn-submit { background-color: var(--primary-orange); border: none; width: 100%; padding: 11px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 5px; }
 
-        .modal-header {
-            background: var(--dark-bg);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* CHAT STYLES */
+        .chat-box { display: flex; flex-direction: column; height: 300px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 10px; background: #fafafa; }
+        .chat-messages { flex-grow: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-msg { background: #e2e8f0; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; max-width: 80%; }
+        .chat-msg.me { background: #dcf8c6; align-self: flex-end; }
+        .chat-input-row { display: flex; border-top: 1px solid var(--border-color); }
+        .chat-input-row input { flex-grow: 1; border: none; padding: 10px; outline: none; font-size: 0.85rem; }
+        .chat-input-row button { background: #0066c0; color: white; border: none; padding: 0 15px; cursor: pointer; font-weight: bold; }
 
-        .modal-header h3 { margin: 0; font-size: 1.2rem; }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 20px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .form-row {
-            margin-bottom: 14px;
-        }
-
-        .form-row label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--text-main);
-        }
-
-        .form-row select, .form-row input, .form-row textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .form-row select:focus, .form-row input:focus, .form-row textarea:focus {
-            border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(255,153,0,0.2);
-        }
-
-        .form-row input[type="file"] {
-            background: #f9f9f9;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        .btn-submit {
-            background-color: var(--primary-orange);
-            color: #0f1111;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        .btn-submit:hover { background-color: #fa8900; }
-
-        .status-box {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 50px;
-            background: white;
-            border-radius: 8px;
-            border: 2px dashed var(--border-color);
-            color: var(--text-muted);
-        }
+        .status-box { font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-main">
-        <div class="brand-container" onclick="window.location.reload()">
-            <div class="brand-logo"></div>
-            <h1 class="brand-title">
-                <span class="tui">Tui</span><span class="phone">Phone</span> <span class="vzla">VZLA</span>
-            </h1>
-        </div>
-
-        <div class="search-container">
-            <select id="filtro-zona-input" onchange="filtrarProductos()">
-                <option value="">Todas las zonas</option>
-                <option value="distrito capital">Distrito Capital</option>
-                <option value="carabobo">Carabobo</option>
-                <option value="aragua">Aragua</option>
-                <option value="miranda">Miranda</option>
-                <option value="lara">Lara</option>
-                <option value="zulia">Zulia</option>
-            </select>
-            <input type="text" id="buscador" placeholder="Busca iPhone 11, 13, Pro, etc..." oninput="filtrarProductos()">
-            <button class="btn-search" onclick="filtrarProductos()">🔍</button>
-        </div>
-
-        <div class="header-actions">
-            <button class="btn-vender" onclick="abrirModal()">+ Vender un iPhone</button>
-        </div>
+    <div class="brand-container" onclick="window.location.reload()">
+        <div class="brand-logo"></div>
+        <h1 class="brand-title">Tui<span class="phone">Phone</span> <span class="vzla">VZLA</span></h1>
+    </div>
+    <div class="search-container">
+        <input type="text" id="buscador" placeholder="Busca tu iPhone..." oninput="filtrarProductos()">
+        <button class="btn-search" onclick="filtrarProductos()">🔍</button>
+    </div>
+    <div class="header-actions" id="user-menu-container">
+        <!-- Renderizado dinámico según sesión -->
     </div>
 </header>
 
-<div class="promo-banner">
-    <h2>⚡ ¡Mega Ofertas de iPhones Verificados en Venezuela! ⚡</h2>
-    <p>Compra y vende con total seguridad. Equipos testeados, garantía de 90 días y envío asegurado.</p>
+<div class="main-wrapper">
+    <div id="status" class="status-box" style="background: #e2e3e5; color: #383d41;">Conectando...</div>
+    <div id="lista-items" class="products-grid"></div>
 </div>
 
-<div class="main-wrapper">
-    <div id="status" class="status-box" style="background: #e2e3e5; color: #383d41;">Conectando con Supabase...</div>
-
-    <div class="filters-bar">
-        <div id="contador-resultados" class="results-count">Cargando inventario...</div>
-        <div class="filter-group">
-            <label for="ordenar-por" style="font-size: 0.85rem; color: var(--text-muted);">Ordenar por:</label>
-            <select id="ordenar-por" onchange="ordenarProductos()">
-                <option value="recientes">Más recientes</option>
-                <option value="precio-asc">Menor precio ($)</option>
-                <option value="precio-desc">Mayor precio ($)</option>
-            </select>
+<!-- MODAL DE REGISTRO / LOGIN -->
+<div id="modal-auth" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Registro de Usuario</h3>
+            <button class="close-btn" onclick="cerrarAuth()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row"><label>Correo Gmail:</label><input type="email" id="auth-email" placeholder="tu-correo@gmail.com"></div>
+            <div class="form-row"><label>Nombre:</label><input type="text" id="auth-nombre" placeholder="Tu nombre"></div>
+            <div class="form-row"><label>Apellido:</label><input type="text" id="auth-apellido" placeholder="Tu apellido"></div>
+            <div class="form-row"><label>Nombre de Usuario (Apodo):</label><input type="text" id="auth-username" placeholder="Ej: jose_iphones"></div>
+            <button class="btn-submit" onclick="registrarUsuario()">Ingresar / Registrarse</button>
         </div>
     </div>
-
-    <div id="lista-items" class="products-grid">
-        <!-- Productos cargados dinámicamente -->
-    </div>
 </div>
 
-<!-- MODAL DE PUBLICACIÓN -->
+<!-- MODAL PUBLICAR -->
 <div id="modal-publicar" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Publicar iPhone Certificado</h3>
-            <button class="close-btn" onclick="cerrarModal()">&times;</button>
+            <h3>Publicar iPhone</h3>
+            <button class="close-btn" onclick="cerrarPublicar()">&times;</button>
         </div>
         <div class="modal-body">
-            
-            <!-- MODELO ESTABLECIDO -->
-            <div class="form-row">
-                <label for="select-model">Modelo del iPhone:</label>
-                <select id="select-model">
-                    <optgroup label="Serie iPhone 15">
-                        <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-                        <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-                        <option value="iPhone 15 Plus">iPhone 15 Plus</option>
-                        <option value="iPhone 15">iPhone 15</option>
-                    </optgroup>
-                    <optgroup label="Serie iPhone 14">
-                        <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
-                        <option value="iPhone 14 Pro">iPhone 14 Pro</option>
-                        <option value="iPhone 14 Plus">iPhone 14 Plus</option>
-                        <option value="iPhone 14">iPhone 14</option>
-                    </optgroup>
-                    <optgroup label="Serie iPhone 13">
-                        <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
-                        <option value="iPhone 13 Pro">iPhone 13 Pro</option>
-                        <option value="iPhone 13">iPhone 13</option>
-                        <option value="iPhone 13 mini">iPhone 13 mini</option>
-                    </optgroup>
-                    <optgroup label="Serie iPhone 12">
-                        <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
-                        <option value="iPhone 12 Pro">iPhone 12 Pro</option>
-                        <option value="iPhone 12">iPhone 12</option>
-                        <option value="iPhone 12 mini">iPhone 12 mini</option>
-                    </optgroup>
-                    <optgroup label="Serie iPhone 11 y Anteriores">
-                        <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
-                        <option value="iPhone 11 Pro">iPhone 11 Pro</option>
-                        <option value="iPhone 11">iPhone 11</option>
-                        <option value="iPhone X / XR / XS">iPhone X / XR / XS</option>
-                    </optgroup>
-                </select>
-            </div>
+            <div class="form-row"><label>Modelo:</label><input type="text" id="p-model" placeholder="Ej: iPhone 13 Pro"></div>
+            <div class="form-row"><label>Almacenamiento:</label><input type="text" id="p-storage" placeholder="Ej: 128GB"></div>
+            <div class="form-row"><label>Batería:</label><input type="text" id="p-battery" placeholder="Ej: 90%"></div>
+            <div class="form-row"><label>Precio ($):</label><input type="number" id="p-price" placeholder="350"></div>
+            <div class="form-row"><label>Estado:</label><input type="text" id="p-state" placeholder="Ej: Impecable 10/10"></div>
+            <div class="form-row"><label>Zona:</label><input type="text" id="p-zone" placeholder="Ej: Caracas"></div>
+            <div class="form-row"><label>Detalles:</label><textarea id="p-details" rows="2"></textarea></div>
+            <div class="form-row"><label>Foto del equipo:</label><input type="file" id="p-image" accept="image/*"></div>
+            <button class="btn-submit" onclick="publicarIphone()">Confirmar Publicación</button>
+        </div>
+    </div>
+</div>
 
-            <!-- ALMACENAMIENTO ESTABLECIDO -->
-            <div class="form-row">
-                <label for="select-storage">Almacenamiento:</label>
-                <select id="select-storage">
-                    <option value="64GB">64 GB</option>
-                    <option value="128GB" selected>128 GB</option>
-                    <option value="256GB">256 GB</option>
-                    <option value="512GB">512 GB</option>
-                    <option value="1TB">1 TB</option>
-                </select>
+<!-- MODAL CHAT -->
+<div id="modal-chat" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="chat-title">Negociación</h3>
+            <button class="close-btn" onclick="cerrarChat()">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 10px;">
+            <div class="chat-box">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-row">
+                    <input type="text" id="chat-input" placeholder="Escribe tu oferta o mensaje...">
+                    <button onclick="enviarMensajeChat()">Enviar</button>
+                </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- BATERÍA -->
-            <div class="form-row">
-                <label for="select-battery">Salud de la Batería:</label>
-                <select id="select-battery">
-                    <option value="100% (Nueva)">100% (Nueva o Reemplazada)</option>
-                    <option value="95% - 99% (Impecable)">95% al 99% (Impecable)</option>
-                    <option value="90% - 94% (Excelente)">90% al 94% (Excelente)</option>
-                    <option value="85% - 89% (Buena)">85% al 89% (Buena)</option>
-                    <option value="80% - 84% (Regular)">80% al 84% (Regular)</option>
-                    <option value="Menor a 80% (Servicio)">Menor a 80% (Requiere Servicio)</option>
-                </select>
-            </div>
-
-            <!-- PRECIO -->
-            <div class="form-row">
-                <label for="input-price">Precio en Dólares ($):</label>
-                <input type="number" id="input-price" placeholder="Ej: 350">
-            </div>
-
-            <!-- ESTADO / CONDICIÓN -->
-            <div class="form-row">
-                <label for="select-state">Estado Físico / Condición:</label>
-                <select id="select-state">
-                    <option value="Impecable 10/10 (Como nuevo)">Impecable 10/10 (Como nuevo)</option>
-                    <option value="Excelente 9/10 (Detalles mínimos)">Excelente 9/10 (Detalles mínimos)</option>
-                    <option value="Bueno 8/10 (Uso normal)">Bueno 8/10 (Uso normal)</option>
-                    <option value="Reparado / Funcional">Funcional con detalles</option>
-                </select>
-            </div>
-
-            <!-- ZONA / UBICACIÓN (ESTADOS DE VENEZUELA Y DISTRITO CAPITAL) -->
-            <div class="form-row">
-                <label for="select-zone">Zona / Estado:</label>
-                <select id="select-zone">
-                    <option value="Distrito Capital">Distrito Capital (Caracas)</option>
-                    <option value="Carabobo">Carabobo (Valencia / Naguanagua)</option>
-                    <option value="Aragua">Aragua (Maracay)</option>
-                    <option value="Miranda">Miranda (Los Teques / Guatire)</option>
-                    <option value="Lara">Lara (Barquisimeto)</option>
-                    <option value="Zulia">Zulia (Maracaibo)</option>
-                    <option value="Anzoátegui">Anzoátegui (Lechería / Barcelona)</option>
-                    <option value="Táchira">Táchira (San Cristóbal)</option>
-                    <option value="Bolívar">Bolívar (Puerto Ordaz)</option>
-                    <option value="Nueva Esparta">Nueva Esparta (Margarita)</option>
-                </select>
-            </div>
-
-            <!-- DETALLES TÉCNICOS ADICIONALES -->
-            <div class="form-row">
-                <label for="input-details">Detalles adicionales:</label>
-                <textarea id="input-details" rows="2" placeholder="Ej: Libre para operadoras, FaceID operativo, incluye cable original."></textarea>
-            </div>
-
-            <!-- FOTO LOCAL -->
-            <div class="form-row">
-                <label for="input-image">Foto real del dispositivo (Archivo local):</label>
-                <input type="file" id="input-image" accept="image/png, image/jpeg, image/webp">
-            </div>
-
-            <button class="btn-submit" onclick="agregarItem()">Publicar en el Marketplace</button>
+<!-- MODAL PANEL DE USUARIO -->
+<div id="modal-panel" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>Mi Panel de Publicaciones</h3>
+            <button class="close-btn" onclick="cerrarPanel()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="mis-publicaciones-lista"></div>
         </div>
     </div>
 </div>
@@ -624,172 +216,228 @@
 <script>
     const SUPABASE_URL = 'https://vwepjlfhnmrvbduxgqgr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
-
     const { createClient } = supabase;
     const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let cacheProductos = [];
+    let usuarioActual = JSON.parse(localStorage.getItem('tui_user')) || null;
+    let chatIphoneIdActual = null;
 
-    function abrirModal() { document.getElementById('modal-publicar').style.display = 'flex'; }
-    function cerrarModal() { document.getElementById('modal-publicar').style.display = 'none'; }
+    function actualizarMenuHeader() {
+        const container = document.getElementById('user-menu-container');
+        if (usuarioActual) {
+            container.innerHTML = `
+                <span style="font-size:0.85rem; color:#ccc;">Hola, <b>@${usuarioActual.username}</b></span>
+                <button class="btn-action" onclick="abrirPublicar()">+ Vender</button>
+                <button class="btn-action" style="background:#232f3e; color:white; border-color:#555;" onclick="abrirPanel()">Mi Panel</button>
+                <button class="btn-action" style="background:#b12704; color:white;" onclick="cerrarSesion()">Salir</button>
+            `;
+        } else {
+            container.innerHTML = `
+                <button class="btn-action" onclick="abrirAuth()">Registrarse / Iniciar Sesión</button>
+            `;
+        }
+    }
+
+    function abrirAuth() { document.getElementById('modal-auth').style.display = 'flex'; }
+    function cerrarAuth() { document.getElementById('modal-auth').style.display = 'none'; }
+    function abrirPublicar() {
+        if (!usuarioActual) { alert('Debes registrarte primero.'); abrirAuth(); return; }
+        document.getElementById('modal-publicar').style.display = 'flex';
+    }
+    function cerrarPublicar() { document.getElementById('modal-publicar').style.display = 'none'; }
+    function cerrarChat() { document.getElementById('modal-chat').style.display = 'none'; }
+    function abrirPanel() { cargarMisPublicaciones(); document.getElementById('modal-panel').style.display = 'flex'; }
+    function cerrarPanel() { document.getElementById('modal-panel').style.display = 'none'; }
+    function cerrarSesion() { localStorage.removeItem('tui_user'); usuarioActual = null; actualizarMenuHeader(); }
+
+    async function registrarUsuario() {
+        const email = document.getElementById('auth-email').value.trim();
+        const nombre = document.getElementById('auth-nombre').value.trim();
+        const apellido = document.getElementById('auth-apellido').value.trim();
+        const username = document.getElementById('auth-username').value.trim();
+
+        if (!email || !nombre || !apellido || !username) {
+            alert('Completa todos los campos obligatorios.'); return;
+        }
+
+        usuarioActual = { email, nombre, apellido, username };
+        localStorage.setItem('tui_user', JSON.stringify(usuarioActual));
+        cerrarAuth();
+        actualizarMenuHeader();
+        alert('¡Bienvenido, ' + username + '!');
+    }
 
     async function cargarDatos() {
         const statusEl = document.getElementById('status');
         try {
             const { data, error } = await _supabase.from('iphone').select('*');
             if (error) throw error;
-
             statusEl.textContent = 'Conectado a Supabase exitosamente ✅';
-            statusEl.style.backgroundColor = '#d4edda';
-            statusEl.style.color = '#155724';
-
+            statusEl.style.background = '#d4edda'; statusEl.style.color = '#155724';
             cacheProductos = data || [];
             filtrarProductos();
         } catch (err) {
-            console.error('Error de conexión:', err);
-            statusEl.textContent = 'Error de conexión con la base de datos.';
-            statusEl.style.backgroundColor = '#f8d7da';
-            statusEl.style.color = '#721c24';
-            document.getElementById('lista-items').innerHTML = `<div class="empty-state"><h3>No se pudo cargar el inventario</h3></div>`;
+            statusEl.textContent = 'Error al cargar datos.';
+            statusEl.style.background = '#f8d7da'; statusEl.style.color = '#721c24';
         }
     }
 
     function filtrarProductos() {
         const query = document.getElementById('buscador').value.toLowerCase();
-        const zonaFiltro = document.getElementById('filtro-zona-input').value.toLowerCase();
-
-        const filtrados = cacheProductos.filter(item => {
-            const model = (item.model || '').toLowerCase();
-            const details = (item.details || '').toLowerCase();
-            const zone = (item.zone || '').toLowerCase();
-
-            const coincideTexto = model.includes(query) || details.includes(query);
-            const coincideZona = zonaFiltro === '' || zone.includes(zonaFiltro);
-
-            return coincideTexto && coincideZona;
-        });
-
+        const filtrados = cacheProductos.filter(i => (i.model || '').toLowerCase().includes(query));
         renderizarGrilla(filtrados);
     }
 
-    function ordenarProductos() {
-        const criterio = document.getElementById('ordenar-por').value;
-        let listaOrdenada = [...cacheProductos];
-
-        if (criterio === 'precio-asc') {
-            listaOrdenada.sort((a, b) => parseFloat(a.price || 0) - parseFloat(b.price || 0));
-        } else if (criterio === 'precio-desc') {
-            listaOrdenada.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0));
-        }
-
-        cacheProductos = listaOrdenada;
-        filtrarProductos();
-    }
-
     function renderizarGrilla(data) {
-        const listaEl = document.getElementById('lista-items');
-        const contadorEl = document.getElementById('contador-resultados');
-        listaEl.innerHTML = '';
-
-        contadorEl.textContent = `${data.length} resultados disponibles`;
-
+        const lista = document.getElementById('lista-items');
+        lista.innerHTML = '';
         if (data.length === 0) {
-            listaEl.innerHTML = '<div class="empty-state"><h3>No se encontraron iPhones con estos filtros</h3><p>Sé el primero en publicar uno.</p></div>';
-            return;
+            lista.innerHTML = '<p>No hay iPhones publicados.</p>'; return;
         }
-
         data.forEach(item => {
-            const model = item.model || 'iPhone Certificado';
-            const storage = item.storage || '';
-            const battery = item.battery || 'N/A';
-            const price = item.price || 0;
-            const state = item.state || 'Bueno';
-            const zone = item.zone || 'Venezuela';
-            const details = item.details || 'Equipo testeado y verificado';
-            const imageUrl = item.image_url || '';
-
             const card = document.createElement('div');
             card.className = 'product-card';
-
             card.innerHTML = `
-                <div class="card-img-container">
-                    <div class="badges-overlay">
-                        <span class="badge">🛡️ Garantía 90 Días</span>
-                        <span class="badge original">⭐ 100% Original</span>
-                    </div>
-                    ${imageUrl ? `<img src="${imageUrl}" alt="${model}" onerror="this.parentElement.innerHTML='<span style=\'color:#888; font-size:0.85rem;\'>Imagen no disponible</span>'">` : `<span style="color:#888; font-size:0.85rem;">Sin imagen</span>`}
-                </div>
+                <img class="card-img" src="${item.image_url || ''}" onerror="this.src='https://via.placeholder.com/280x200?text=Sin+Imagen'">
                 <div class="card-body">
-                    <h3 class="card-title">${model} - ${storage}</h3>
-                    <div class="card-specs">🔋 Bat: ${battery} | Estética: ${state}</div>
-                    <div class="card-location">📍 ${zone}</div>
-                    <div class="card-snippet">${details}</div>
-                    <div class="card-price-row">
-                        <span class="price-tag">$${price}</span>
-                        <span class="shipping-tag">Envío Asegurado 🚚</span>
+                    <h3 class="card-title">${item.model || ''} - ${item.storage || ''}</h3>
+                    <div class="card-specs">🔋 ${item.battery || 'N/A'} | 📍 ${item.zone || ''}</div>
+                    <div class="seller-info">Publicado por: @${item.user_email ? item.user_email.split('@')[0] : 'anónimo'}</div>
+                    <div class="card-price">$${item.price || 0}</div>
+                    <div class="card-buttons">
+                        <button class="btn-card btn-chat" onclick="abrirChat(${item.id}, '${item.model}')">💬 Chat / Negociar</button>
                     </div>
                 </div>
             `;
-            listaEl.appendChild(card);
+            lista.appendChild(card);
         });
     }
 
-    async function agregarItem() {
-        const model = document.getElementById('select-model').value;
-        const storage = document.getElementById('select-storage').value;
-        const battery = document.getElementById('select-battery').value;
-        const price = document.getElementById('input-price').value;
-        const state = document.getElementById('select-state').value;
-        const zone = document.getElementById('select-zone').value;
-        const detailsInput = document.getElementById('input-details').value.trim();
-        const inputFile = document.getElementById('input-image');
+    async function publicarIphone() {
+        const model = document.getElementById('p-model').value;
+        const storage = document.getElementById('p-storage').value;
+        const battery = document.getElementById('p-battery').value;
+        const price = document.getElementById('p-price').value;
+        const state = document.getElementById('p-state').value;
+        const zone = document.getElementById('p-zone').value;
+        const details = document.getElementById('p-details').value;
+        const fileInput = document.getElementById('p-image');
 
-        if (!price || parseFloat(price) <= 0) {
-            alert('Por favor ingresa un precio válido.');
-            return;
-        }
+        if (!price) { alert('Ingresa un precio.'); return; }
 
-        const detailsFinal = `Notas: ${detailsInput || 'Ninguna'}`;
-
-        const guardarEnSupabase = async (base64Imagen) => {
-            const nuevoRegistro = {
-                model: model,
-                storage: storage,
-                battery: battery,
-                price: price,
-                state: state,
-                zone: zone,
-                details: detailsFinal,
-                image_url: base64Imagen
-            };
-
-            const { error } = await _supabase
-                .from('iphone')
-                .insert([nuevoRegistro]);
-
-            if (error) {
-                alert('Error al publicar: ' + error.message);
-            } else {
-                alert('¡Tu iPhone ha sido publicado con éxito!');
-                cerrarModal();
-                document.getElementById('input-price').value = '';
-                document.getElementById('input-details').value = '';
-                document.getElementById('input-image').value = '';
+        const guardar = async (imgBase64) => {
+            const { error } = await _supabase.from('iphone').insert([{
+                model, storage, battery, price, state, zone, details,
+                image_url: imgBase64,
+                user_email: usuarioActual.email
+            }]);
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('¡Publicado con éxito!');
+                cerrarPublicar();
                 cargarDatos();
             }
         };
 
-        if (inputFile.files && inputFile.files[0]) {
+        if (fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                guardarEnSupabase(e.target.result);
-            };
-            reader.readAsDataURL(inputFile.files[0]);
+            reader.onload = e => guardar(e.target.result);
+            reader.readAsDataURL(fileInput.files[0]);
         } else {
-            guardarEnSupabase('');
+            guardar('');
         }
     }
 
+    // GESTIÓN DEL CHAT POR PUBLICACIÓN
+    async function abrirChat(iphoneId, modelo) {
+        if (!usuarioActual) { alert('Inicia sesión para chatear.'); abrirAuth(); return; }
+        chatIphoneIdActual = iphoneId;
+        document.getElementById('chat-title').textContent = `Negociación: ${modelo}`;
+        document.getElementById('modal-chat').style.display = 'flex';
+        cargarMensajesChat();
+    }
+
+    async function cargarMensajesChat() {
+        const container = document.getElementById('chat-messages');
+        container.innerHTML = 'Cargando chat...';
+        const { data, error } = await _supabase
+            .from('messages')
+            .select('*')
+            .eq('iphone_id', chatIphoneIdActual)
+            .order('created_at', { ascending: true });
+
+        container.innerHTML = '';
+        if (error || !data || data.length === 0) {
+            container.innerHTML = '<p style="color:#888; font-size:0.8rem; text-align:center;">No hay mensajes aún. ¡Inicia la conversación!</p>';
+            return;
+        }
+
+        data.forEach(m => {
+            const div = document.createElement('div');
+            div.className = `chat-msg ${m.remitente === usuarioActual.username ? 'me' : ''}`;
+            div.innerHTML = `<b>@${m.remitente}:</b> ${m.mensaje}`;
+            container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function enviarMensajeChat() {
+        const input = document.getElementById('chat-input');
+        const mensaje = input.value.trim();
+        if (!mensaje) return;
+
+        const { error } = await _supabase.from('messages').insert([{
+            iphone_id: chatIphoneIdActual,
+            remitente: usuarioActual.username,
+            mensaje: mensaje
+        }]);
+
+        if (!error) {
+            input.value = '';
+            cargarMensajesChat();
+        }
+    }
+
+    // PANEL PERSONAL
+    async function cargarMisPublicaciones() {
+        const container = document.getElementById('mis-publicaciones-lista');
+        container.innerHTML = 'Cargando tus publicaciones...';
+        const { data, error } = await _supabase
+            .from('iphone')
+            .select('*')
+            .eq('user_email', usuarioActual.email);
+
+        if (error || !data || data.length === 0) {
+            container.innerHTML = '<p>No tienes publicaciones activas.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:10px 0;";
+            div.innerHTML = `
+                <div><b>${item.model}</b> - $${item.price}</div>
+                <button class="btn-action" style="background:#b12704; color:white; padding:5px 10px;" onclick="eliminarPublicacion(${item.id})">Eliminar</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    async function eliminarPublicacion(id) {
+        if (!confirm('¿Seguro que deseas eliminar este anuncio?')) return;
+        const { error } = await _supabase.from('iphone').delete().eq('id', id);
+        if (!error) {
+            alert('Anuncio eliminado.');
+            cargarMisPublicaciones();
+            cargarDatos();
+        } else {
+            alert('Error al eliminar: ' + error.message);
+        }
+    }
+
+    actualizarMenuHeader();
     cargarDatos();
 </script>
 
