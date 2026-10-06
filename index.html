@@ -42,7 +42,7 @@
         <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-4 text-center text-xs sm:text-sm font-medium shadow-inner flex justify-center items-center gap-6">
             <span><i class="fa-solid fa-shield-halved"></i> Compra y Venta Segura</span>
             <span class="hidden sm:inline">|</span>
-            <span><i class="fa-solid fa-location-dot">Cubrimiento en los 24 Estados del País</i></span>
+            <span><i class="fa-solid fa-location-dot"></i> Cubrimiento en los 24 Estados del País</span>
             <span class="hidden sm:inline">|</span>
             <span><i class="fa-solid fa-bolt"></i> Atención Directa con Vendedores</span>
         </div>
@@ -125,9 +125,10 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Enlace de la Foto (URL)</label>
-                        <input type="url" id="inputImage" placeholder="https://..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600" required>
-                        <p class="text-[11px] text-slate-400 mt-1">Pega el link directo de la imagen del equipo.</p>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Foto del iPhone (Archivo o URL)</label>
+                        <input type="file" id="inputFile" accept="image/*" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2">
+                        <input type="url" id="inputImage" placeholder="O pega un enlace de imagen (https://...)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:outline-none focus:border-blue-600">
+                        <p class="text-[11px] text-slate-400 mt-1">Puedes seleccionar una foto de tu equipo o pegar una URL directa.</p>
                     </div>
 
                     <div>
@@ -152,8 +153,8 @@
 
     <!-- Script de Gestión Completa -->
     <script>
-        const SUPABASE_URL = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
-        const SUPABASE_ANON_KEY = 'sb_secret_B3zTMPkinFXa7QKUfOqohg_qm0ztOaH';
+        const SUPABASE_URL = 'https://wvepjlhnmrvbduxgqgr.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_BoA_BZpAahdFaKe2334ixQ_pxgfEmRt';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -212,6 +213,27 @@
             btn.innerText = "Guardando equipo...";
             btn.disabled = true;
 
+            const fileInput = document.getElementById('inputFile');
+            const urlInput = document.getElementById('inputImage').value;
+            let imagenFinal = urlInput;
+
+            // Si el usuario seleccionó un archivo local, lo convertimos a Base64 para guardarlo directamente
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                imagenFinal = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            if (!imagenFinal) {
+                alert('Por favor selecciona una foto o introduce una URL.');
+                btn.innerText = "Publicar en el Servidor";
+                btn.disabled = false;
+                return;
+            }
+
             const nuevoiPhone = {
                 model: document.getElementById('inputModel').value,
                 storage: document.getElementById('inputStorage').value,
@@ -220,7 +242,7 @@
                 state: document.getElementById('inputState').value,
                 zone: document.getElementById('inputZone').value,
                 details: document.getElementById('inputDetails').value,
-                image_url: document.getElementById('inputImage').value
+                image_url: imagenFinal
             };
 
             const { error } = await supabaseClient.from('iphone').insert([nuevoiPhone]);
